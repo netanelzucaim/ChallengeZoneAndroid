@@ -19,9 +19,11 @@ class Model private constructor() {
     }
     // The list of students is now of type ArrayList<Student>, where Student is Parcelable
 //    val students: MutableList<Student> = ArrayList()
+
     private val database: AppLocalDbRepository = AppLocalDb.database
-    private val executor = Executors.newSingleThreadExecutor()
-    private val mainHandler = HandlerCompat.createAsync(Looper.getMainLooper())
+    private var executor = Executors.newSingleThreadExecutor()
+    private var mainHandler = HandlerCompat.createAsync(Looper.getMainLooper())
+
     private val cloudinaryModel = CloudinaryModel()
     private val firebaseModel = FirebaseModel()
 
@@ -30,7 +32,28 @@ class Model private constructor() {
     }
 
     fun getAllStudents(callback: StudentsCallback) {
-        firebaseModel.getAllStudents(callback)
+//        firebaseModel.getAllStudents(callback)
+        var lastUpdated: Long = Student.lastUpdated
+        firebaseModel.getAllStudents(lastUpdated){ list ->
+            executor.execute{
+                var currentTime = lastUpdated
+                for(student in list){
+                    database.studentDao().insertStudents(student)
+                    student.lastUpdated?.let {
+                        if (currentTime < it) {
+                            currentTime = it
+
+                        }
+                    }
+                }
+                Student.lastUpdated = currentTime
+                val students = database.studentDao().getAllStudents()
+                mainHandler.post {
+                    callback(students)
+                }
+            }
+
+        }
     }
 
 

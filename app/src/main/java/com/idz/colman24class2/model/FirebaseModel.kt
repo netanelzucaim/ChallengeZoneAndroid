@@ -10,7 +10,10 @@ import com.idz.colman24class2.base.Constants
 import com.idz.colman24class2.base.EmptyCallback
 import com.idz.colman24class2.base.StudentsCallback
 import com.idz.colman24class2.model.Student
+import com.idz.colman24class2.utils.extensions.toFirebaseTimestamp
 import java.io.ByteArrayOutputStream
+import java.util.Date
+import android.util.Log
 
 class FirebaseModel {
 
@@ -24,17 +27,21 @@ class FirebaseModel {
         database.firestoreSettings = settings
     }
 
-    fun getAllStudents(callback: StudentsCallback) {
-        database.collection(Constants.Collections.STUDENTS).get().addOnCompleteListener {
-            when (it.isSuccessful) {
-                true -> {
-                    val students: MutableList<Student> = mutableListOf()
-                    for (json in it.result) {
-                        students.add(Student.fromJSON(json.data))
+    fun getAllStudents(sinceLastUpdated: Long, callback: StudentsCallback) {
+        database.collection(Constants.Collections.STUDENTS)
+            .whereGreaterThanOrEqualTo(Student.LAST_UPDATED,sinceLastUpdated.toFirebaseTimestamp)
+            .get()
+            .addOnCompleteListener {
+                when (it.isSuccessful) {
+                    true -> {
+                        val students: MutableList<Student> = mutableListOf()
+                        for (json in it.result) {
+                            students.add(Student.fromJSON(json.data))
+                        }
+                        Log.d("TAG", students.size.toString())
+                        callback(students)
                     }
-                    callback(students)
-                }
-                false -> callback(listOf())
+                    false -> callback(listOf())
             }
         }
     }
@@ -43,6 +50,9 @@ class FirebaseModel {
         database.collection(Constants.Collections.STUDENTS).document(student.id).set(student.json)
             .addOnCompleteListener {
                 callback()
+            }
+            .addOnFailureListener {
+                Log.d("TAG", it.toString() + it.message)
             }
     }
 

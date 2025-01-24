@@ -1,6 +1,6 @@
 package com.idz.colman24class2
 
-import android.os.Bundle
+import  android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -14,6 +14,7 @@ import com.idz.colman24class2.adapter.StudentsRecyclerAdapter
 import com.idz.colman24class2.model.Model
 import com.idz.colman24class2.model.Student
 import android.widget.ProgressBar
+import androidx.lifecycle.ViewModelProvider
 import com.idz.colman24class2.databinding.FragmentStudentsListBinding
 
 interface OnItemClickListener {
@@ -22,7 +23,8 @@ interface OnItemClickListener {
 }
 
 class StudentsListFragment : Fragment() {
-    private var students: List<Student>? = null
+//    private var students: List<Student>? = null
+    private var viewModel: StudentsListViewModel? = null
     private var adapter: StudentsRecyclerAdapter? = null
     private var binding: FragmentStudentsListBinding? = null
 
@@ -32,6 +34,7 @@ class StudentsListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentStudentsListBinding.inflate(inflater, container, false)
+        viewModel = ViewModelProvider(this)[StudentsListViewModel::class.java]
 
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_students_list, container, false)
@@ -47,7 +50,7 @@ class StudentsListFragment : Fragment() {
 //        val adapter = StudentsRecyclerAdapter(students)
         binding?.recyclerView?.layoutManager = layoutManager
 
-        adapter = StudentsRecyclerAdapter(students)
+        adapter = StudentsRecyclerAdapter(viewModel?.students)
 
 
         adapter?.listener = object : OnItemClickListener{
@@ -89,9 +92,10 @@ override fun onDestroy() {
 private fun getAllStudents() {
     binding?.progressBar?.visibility = View.VISIBLE
     Model.shared.getAllStudents {
-        this.students = it
+        viewModel?.updateStudents(it)
         adapter?.set(it)
         adapter?.notifyDataSetChanged()
+
         binding?.progressBar?.visibility = View.GONE
     }
 }
