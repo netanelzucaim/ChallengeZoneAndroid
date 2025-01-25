@@ -19,5 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Colman24Class2"
+rootProject.name = "ChallengeZone"
 include(":app")

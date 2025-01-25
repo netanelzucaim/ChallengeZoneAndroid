@@ -1,4 +1,4 @@
-package com.idz.colman24class2.base
+package com.idz.ChallengeZone.base
 
 import android.app.Application
 import android.content.Context

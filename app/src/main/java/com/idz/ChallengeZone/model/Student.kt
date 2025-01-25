@@ -1,4 +1,4 @@
-package com.idz.colman24class2.model
+package com.idz.ChallengeZone.model
 
 import android.content.Context
 import android.os.Parcel
@@ -7,7 +7,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
-import com.idz.colman24class2.base.MyApplication
+import com.idz.ChallengeZone.base.MyApplication
 
 @Entity
 data class Student(

@@ -1,9 +1,9 @@
-package com.idz.colman24class2.model.dao
+package com.idz.ChallengeZone.model.dao
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.idz.colman24class2.base.MyApplication
-import com.idz.colman24class2.model.Student
+import com.idz.ChallengeZone.base.MyApplication
+import com.idz.ChallengeZone.model.Student
 //@Database(entities = [Student::class], version = 1)
 @Database(entities = [Student::class], version = 3)
 

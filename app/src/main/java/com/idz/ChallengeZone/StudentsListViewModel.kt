@@ -1,7 +1,7 @@
-package com.idz.colman24class2
+package com.idz.ChallengeZone
 
 import androidx.lifecycle.ViewModel
-import com.idz.colman24class2.model.Student
+import com.idz.ChallengeZone.model.Student
 
 class StudentsListViewModel : ViewModel() {
      var students: List<Student>? = null
@@ -14,9 +14,9 @@ class StudentsListViewModel : ViewModel() {
         this.students = students
     }
 }
-//package com.idz.colman24class2
+//package com.idz.ChallengeZone
 //import androidx.lifecycle.ViewModel
-//import com.idz.colman24class2.model.Student
+//import com.idz.ChallengeZone.model.Student
 //class StudentsListViewModel: ViewModel() {
 //    var students: List<Student>? = null
 //}

@@ -1,4 +1,4 @@
-package com.idz.colman24class2.utils.extensions
+package com.idz.ChallengeZone.utils.extensions
 
 import android.content.Context
 import android.graphics.Bitmap

@@ -1,4 +1,4 @@
-package com.idz.colman24class2
+package com.idz.ChallengeZone
 
 import android.content.Intent
 import android.os.Bundle

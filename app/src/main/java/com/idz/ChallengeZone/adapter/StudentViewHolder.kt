@@ -1,14 +1,14 @@
-package com.idz.colman24class2.adapter
+package com.idz.ChallengeZone.adapter
 
 import android.util.Log
 import android.view.View
 import android.widget.CheckBox
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.idz.colman24class2.OnItemClickListener
-import com.idz.colman24class2.R
-import com.idz.colman24class2.databinding.StudentListRowBinding
-import com.idz.colman24class2.model.Student
+import com.idz.ChallengeZone.OnItemClickListener
+import com.idz.ChallengeZone.R
+import com.idz.ChallengeZone.databinding.StudentListRowBinding
+import com.idz.ChallengeZone.model.Student
 import com.squareup.picasso.Picasso
 
 class StudentViewHolder(

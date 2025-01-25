@@ -1,4 +1,4 @@
-package com.idz.colman24class2.model
+package com.idz.ChallengeZone.model
 
 import android.graphics.Bitmap
 import com.google.firebase.firestore.firestoreSettings
@@ -6,11 +6,11 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.memoryCacheSettings
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
-import com.idz.colman24class2.base.Constants
-import com.idz.colman24class2.base.EmptyCallback
-import com.idz.colman24class2.base.StudentsCallback
-import com.idz.colman24class2.model.Student
-import com.idz.colman24class2.utils.extensions.toFirebaseTimestamp
+import com.idz.ChallengeZone.base.Constants
+import com.idz.ChallengeZone.base.EmptyCallback
+import com.idz.ChallengeZone.base.StudentsCallback
+import com.idz.ChallengeZone.model.Student
+import com.idz.ChallengeZone.utils.extensions.toFirebaseTimestamp
 import java.io.ByteArrayOutputStream
 import java.util.Date
 import android.util.Log

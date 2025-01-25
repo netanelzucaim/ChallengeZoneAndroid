@@ -1,4 +1,4 @@
-package com.idz.colman24class2
+package com.idz.ChallengeZone
 
 import android.content.Intent
 import android.os.Bundle
@@ -15,9 +15,9 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.navigation.Navigation
 import androidx.navigation.ui.NavigationUI
-import com.idz.colman24class2.databinding.FragmentEditStudentBinding
-import com.idz.colman24class2.model.Model
-import com.idz.colman24class2.model.Student
+import com.idz.ChallengeZone.databinding.FragmentEditStudentBinding
+import com.idz.ChallengeZone.model.Model
+import com.idz.ChallengeZone.model.Student
 import com.squareup.picasso.Picasso
 
 class EditStudentFragment : Fragment() {
