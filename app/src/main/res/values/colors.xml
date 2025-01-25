@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="light_gray">#E0E0E0</color> <!-- צבע שדות הטקסט והרקע של הלחצן "Sign up" -->
+    <color name="black">#000000</color> <!-- צבע הטקסט והכפתור השחור -->
+    <color name="dark_gray">#757575</color> <!-- צבע לטקסט משני כמו תיאור המסך -->
+    <color name="primary">#000000</color> <!-- צבע דומיננטי נוסף (למשל, לכפתור ההמשך) -->
 </resources>
