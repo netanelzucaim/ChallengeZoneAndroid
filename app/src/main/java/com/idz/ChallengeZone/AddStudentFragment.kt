@@ -1,4 +1,4 @@
-package com.idz.colman24class2
+package com.idz.ChallengeZone
 
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
@@ -15,9 +15,9 @@ import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.navigation.Navigation
-import com.idz.colman24class2.model.Model
-import com.idz.colman24class2.model.Student
-import com.idz.colman24class2.databinding.FragmentAddStudentBinding
+import com.idz.ChallengeZone.model.Model
+import com.idz.ChallengeZone.model.Student
+import com.idz.ChallengeZone.databinding.FragmentAddStudentBinding
 
 
 class AddStudentFragment : Fragment() {

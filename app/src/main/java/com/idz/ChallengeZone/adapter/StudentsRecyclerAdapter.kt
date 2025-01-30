@@ -1,13 +1,13 @@
-package com.idz.colman24class2.adapter
+package com.idz.ChallengeZone.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.idz.colman24class2.R
-import com.idz.colman24class2.model.Student
+import com.idz.ChallengeZone.R
+import com.idz.ChallengeZone.model.Student
 
-import  com.idz.colman24class2.OnItemClickListener
-import com.idz.colman24class2.databinding.StudentListRowBinding
+import  com.idz.ChallengeZone.OnItemClickListener
+import com.idz.ChallengeZone.databinding.StudentListRowBinding
 
 //class StudentsRecyclerAdapter(private val students: MutableList<Student>?): RecyclerView.Adapter<StudentViewHolder>() {
 class StudentsRecyclerAdapter(private var students: List<Student>?): RecyclerView.Adapter<StudentViewHolder>() {

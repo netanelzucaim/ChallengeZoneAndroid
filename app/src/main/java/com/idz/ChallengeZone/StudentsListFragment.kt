@@ -1,4 +1,4 @@
-package com.idz.colman24class2
+package com.idz.ChallengeZone
 
 import  android.os.Bundle
 import android.util.Log
@@ -10,12 +10,12 @@ import android.widget.ImageButton
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.idz.colman24class2.adapter.StudentsRecyclerAdapter
-import com.idz.colman24class2.model.Model
-import com.idz.colman24class2.model.Student
+import com.idz.ChallengeZone.adapter.StudentsRecyclerAdapter
+import com.idz.ChallengeZone.model.Model
+import com.idz.ChallengeZone.model.Student
 import android.widget.ProgressBar
 import androidx.lifecycle.ViewModelProvider
-import com.idz.colman24class2.databinding.FragmentStudentsListBinding
+import com.idz.ChallengeZone.databinding.FragmentStudentsListBinding
 
 interface OnItemClickListener {
     fun onItemClick(position: Int)

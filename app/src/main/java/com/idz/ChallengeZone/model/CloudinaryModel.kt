@@ -1,4 +1,4 @@
-package com.idz.colman24class1.model
+package com.idz.ChallengeZone.model
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -6,9 +6,9 @@ import com.cloudinary.android.MediaManager
 import com.cloudinary.android.callback.ErrorInfo
 import com.cloudinary.android.callback.UploadCallback
 import com.cloudinary.android.policy.GlobalUploadPolicy
-import com.idz.colman24class2.BuildConfig
-import com.idz.colman24class2.base.MyApplication
-import com.idz.colman24class2.utils.extensions.toFile
+import com.idz.ChallengeZone.BuildConfig
+import com.idz.ChallengeZone.base.MyApplication
+import com.idz.ChallengeZone.utils.extensions.toFile
 import java.io.File
 import java.io.FileOutputStream
 

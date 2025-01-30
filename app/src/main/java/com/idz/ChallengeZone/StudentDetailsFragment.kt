@@ -1,4 +1,4 @@
-package com.idz.colman24class2
+package com.idz.ChallengeZone
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -10,9 +10,9 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.TextView
 import androidx.navigation.Navigation
-import com.idz.colman24class2.databinding.FragmentAddStudentBinding
-import com.idz.colman24class2.model.Student
-import com.idz.colman24class2.databinding.FragmentStudentDetailsBinding
+import com.idz.ChallengeZone.databinding.FragmentAddStudentBinding
+import com.idz.ChallengeZone.model.Student
+import com.idz.ChallengeZone.databinding.FragmentStudentDetailsBinding
 import com.squareup.picasso.Picasso
 
 class StudentDetailsFragment : Fragment() {

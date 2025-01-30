@@ -1,11 +1,11 @@
-package com.idz.colman24class2.model
+package com.idz.ChallengeZone.model
 import android.graphics.Bitmap
 import android.os.Looper
 import androidx.core.os.HandlerCompat
 import com.google.android.gms.auth.api.signin.internal.Storage
-import com.idz.colman24class1.model.CloudinaryModel
-import com.idz.colman24class2.model.dao.AppLocalDb
-import com.idz.colman24class2.model.dao.AppLocalDbRepository
+import com.idz.ChallengeZone.model.CloudinaryModel
+import com.idz.ChallengeZone.model.dao.AppLocalDb
+import com.idz.ChallengeZone.model.dao.AppLocalDbRepository
 import java.util.concurrent.Executors
 typealias StudentsCallback = (List<Student>) -> Unit
 typealias EmptyCallback = () -> Unit

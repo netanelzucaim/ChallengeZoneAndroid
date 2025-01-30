@@ -1,4 +1,4 @@
-package com.idz.colman24class2.adapter
+package com.idz.ChallengeZone.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,8 +6,8 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.CheckBox
 import android.widget.TextView
-import com.idz.colman24class2.R
-import com.idz.colman24class2.model.Student
+import com.idz.ChallengeZone.R
+import com.idz.ChallengeZone.model.Student
 
 class StudentsAdapter(private val students: MutableList<Student>?): BaseAdapter() {
 

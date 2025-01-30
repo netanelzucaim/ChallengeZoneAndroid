@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "com.idz.colman24class2"
+    namespace = "com.idz.ChallengeZone"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.idz.colman24class2"
+        applicationId = "com.idz.ChallengeZone"
         minSdk = 29
         targetSdk = 34
         versionCode = 1
