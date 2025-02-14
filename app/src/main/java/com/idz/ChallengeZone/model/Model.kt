@@ -7,12 +7,23 @@ import com.idz.ChallengeZone.model.CloudinaryModel
 import com.idz.ChallengeZone.model.dao.AppLocalDb
 import com.idz.ChallengeZone.model.dao.AppLocalDbRepository
 import java.util.concurrent.Executors
+import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 typealias StudentsCallback = (List<Student>) -> Unit
 typealias EmptyCallback = () -> Unit
+
 interface GetAllStudentsListener {
     fun onCompletion(students: List<Student>)
 }
+
+
 class Model private constructor() {
+    enum class LoadingState {
+        LOADING,
+        LOADED
+    }
+
     enum class Storage {
         FIREBASE,
         CLOUDINARY
@@ -23,7 +34,8 @@ class Model private constructor() {
     private val database: AppLocalDbRepository = AppLocalDb.database
     private var executor = Executors.newSingleThreadExecutor()
     private var mainHandler = HandlerCompat.createAsync(Looper.getMainLooper())
-
+    val students: LiveData<List<Student>> = database.studentDao().getAllStudent()
+    val loadingState: MutableLiveData<LoadingState> = MutableLiveData<LoadingState>()
     private val cloudinaryModel = CloudinaryModel()
     private val firebaseModel = FirebaseModel()
 
@@ -31,8 +43,9 @@ class Model private constructor() {
         val shared = Model()
     }
 
-    fun getAllStudents(callback: StudentsCallback) {
-//        firebaseModel.getAllStudents(callback)
+//    fun getAllStudents(callback: StudentsCallback) {
+fun refreshAllStudents() {
+        loadingState.postValue(LoadingState.LOADING)
         var lastUpdated: Long = Student.lastUpdated
         firebaseModel.getAllStudents(lastUpdated){ list ->
             executor.execute{
@@ -46,11 +59,12 @@ class Model private constructor() {
                         }
                     }
                 }
-                Student.lastUpdated = currentTime
-                val students = database.studentDao().getAllStudents()
-                mainHandler.post {
-                    callback(students)
-                }
+//                Student.lastUpdated = currentTime
+//                val students = database.studentDao().getAllStudents()
+//                mainHandler.post {
+//                    callback(students)
+//                }
+                loadingState.postValue(LoadingState.LOADED)
             }
 
         }

@@ -5,11 +5,14 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import androidx.lifecycle.LiveData
+
 import com.idz.ChallengeZone.model.Student
 @Dao
 interface StudentDao {
     @Query("SELECT * FROM Student")
-    fun getAllStudents(): List<Student>
+//    fun getAllStudents(): List<Student>
+    fun getAllStudent(): LiveData<List<Student>>
     @Query("SELECT * FROM Student WHERE id =:id")
     fun getStudentById(id: String): Student
     @Insert(onConflict = OnConflictStrategy.REPLACE)

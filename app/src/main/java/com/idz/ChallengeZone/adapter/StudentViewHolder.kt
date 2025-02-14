@@ -50,8 +50,6 @@ class StudentViewHolder(
                         .placeholder(R.drawable.avatar)
                         .into(binding.imageView)
                 }
-
             }
-
         }
     }
