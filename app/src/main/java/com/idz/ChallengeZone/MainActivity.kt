@@ -1,18 +1,14 @@
 package com.idz.ChallengeZone
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
-import android.widget.Button
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.NavController
-import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -60,7 +56,7 @@ class MainActivity : AppCompatActivity() {
 
         // Show/hide menu items based on current fragment
         menu?.findItem(R.id.editStudentFragment)?.isVisible = currentFragment == R.id.studentDetailsFragment
-        menu?.findItem(R.id.addStudentFragment)?.isVisible = currentFragment == R.id.studentsListFragment
+        menu?.findItem(R.id.addStudentFragment)?.isVisible = currentFragment == R.id.studentListFragment
 
         return super.onPrepareOptionsMenu(menu)
     }

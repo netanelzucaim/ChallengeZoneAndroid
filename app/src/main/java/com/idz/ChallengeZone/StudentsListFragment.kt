@@ -24,8 +24,7 @@ interface OnItemClickListener {
 }
 
 class StudentsListFragment : Fragment() {
-//    private var students: List<Student>? = null
-//    private var viewModel: StudentsListViewModel? = null
+
     private val viewModel: StudentsListViewModel by viewModels()
     private var adapter: StudentsRecyclerAdapter? = null
     private var binding: FragmentStudentsListBinding? = null

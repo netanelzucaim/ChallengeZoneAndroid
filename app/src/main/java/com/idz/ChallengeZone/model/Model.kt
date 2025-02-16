@@ -2,14 +2,13 @@ package com.idz.ChallengeZone.model
 import android.graphics.Bitmap
 import android.os.Looper
 import androidx.core.os.HandlerCompat
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.auth.api.signin.internal.Storage
-import com.idz.ChallengeZone.model.CloudinaryModel
 import com.idz.ChallengeZone.model.dao.AppLocalDb
 import com.idz.ChallengeZone.model.dao.AppLocalDbRepository
 import java.util.concurrent.Executors
-import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+
 typealias StudentsCallback = (List<Student>) -> Unit
 typealias EmptyCallback = () -> Unit
 
@@ -28,14 +27,13 @@ class Model private constructor() {
         FIREBASE,
         CLOUDINARY
     }
-    // The list of students is now of type ArrayList<Student>, where Student is Parcelable
-//    val students: MutableList<Student> = ArrayList()
 
     private val database: AppLocalDbRepository = AppLocalDb.database
     private var executor = Executors.newSingleThreadExecutor()
     private var mainHandler = HandlerCompat.createAsync(Looper.getMainLooper())
     val students: LiveData<List<Student>> = database.studentDao().getAllStudent()
     val loadingState: MutableLiveData<LoadingState> = MutableLiveData<LoadingState>()
+
     private val cloudinaryModel = CloudinaryModel()
     private val firebaseModel = FirebaseModel()
 
@@ -43,14 +41,13 @@ class Model private constructor() {
         val shared = Model()
     }
 
-//    fun getAllStudents(callback: StudentsCallback) {
-fun refreshAllStudents() {
+    fun refreshAllStudents() {
         loadingState.postValue(LoadingState.LOADING)
         var lastUpdated: Long = Student.lastUpdated
-        firebaseModel.getAllStudents(lastUpdated){ list ->
-            executor.execute{
+        firebaseModel.getAllStudents(lastUpdated) { list ->
+            executor.execute {
                 var currentTime = lastUpdated
-                for(student in list){
+                for (student in list) {
                     database.studentDao().insertStudents(student)
                     student.lastUpdated?.let {
                         if (currentTime < it) {
@@ -59,17 +56,12 @@ fun refreshAllStudents() {
                         }
                     }
                 }
-//                Student.lastUpdated = currentTime
-//                val students = database.studentDao().getAllStudents()
-//                mainHandler.post {
-//                    callback(students)
-//                }
+                Student.lastUpdated = currentTime
                 loadingState.postValue(LoadingState.LOADED)
             }
 
         }
     }
-
 
 
     fun add(student: Student, image: Bitmap?, storage: Storage, callback: EmptyCallback) {
@@ -92,11 +84,17 @@ fun refreshAllStudents() {
         }
     }
 
-    private fun uploadTo(storage: Storage, image: Bitmap, name: String, callback: (String?) -> Unit) {
+    private fun uploadTo(
+        storage: Storage,
+        image: Bitmap,
+        name: String,
+        callback: (String?) -> Unit
+    ) {
         when (storage) {
             Storage.FIREBASE -> {
                 uploadImageToFirebase(image, name, callback)
             }
+
             Storage.CLOUDINARY -> {
                 uploadImageToCloudinary(
                     bitmap = image,
@@ -105,6 +103,51 @@ fun refreshAllStudents() {
                     onError = { callback(null) }
                 )
             }
+        }
+    }
+
+    //
+    fun signUp(
+        user: User,
+        password: String,
+        image: Bitmap?,
+        storage: Storage,
+        callback: EmptyCallback
+    ) {
+        firebaseModel.signUp(user, password) {
+            image?.let {
+                uploadTo(
+                    storage,
+                    image = image,
+                    name = user.userName,
+                    callback = { uri ->
+                        if (!uri.isNullOrBlank()) {
+                            val us = user.copy(avatarUrl = uri)
+                            firebaseModel.addUser(us, callback)
+                        } else {
+                            callback()
+                        }
+                    },
+                )
+            } ?: callback()
+        }
+    }
+
+    fun logIn(username: String, password: String, callback: (Boolean?) -> Unit) {
+        firebaseModel.logIn(username, password) { isSuccessful ->
+            callback(isSuccessful)
+        }
+    }
+
+    fun isUserNameTaken(username: String, callback: (Boolean) -> Unit) {
+        firebaseModel.isUsernameTaken(username) { isTaken ->
+            callback(isTaken ?: false)
+        }
+    }
+
+    fun isEmailTaken(email: String, callback: (Boolean) -> Unit) {
+        firebaseModel.isEmailTaken(email) { isTaken ->
+            callback(isTaken ?: false)
         }
     }
 
