@@ -9,5 +9,6 @@ object Constants {
 
     object Collections {
         const val STUDENTS = "students_collection"
+        const val USERS = "users_collection"
     }
 }

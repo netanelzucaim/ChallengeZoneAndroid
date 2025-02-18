@@ -14,7 +14,12 @@ class StudentsRecyclerAdapter(private var students: List<Student>?): RecyclerVie
 
 
         var listener: OnItemClickListener? = null
-        fun set(students: List<Student>?) {
+        fun update(students: List<Student>?) {
+            this.students = students
+        }
+
+
+    fun set(students: List<Student>?) {
             this.students = students
         }
         override fun getItemCount(): Int = students?.size ?: 0

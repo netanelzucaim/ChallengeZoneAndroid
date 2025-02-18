@@ -16,6 +16,7 @@ import com.idz.ChallengeZone.model.Student
 import android.widget.ProgressBar
 import androidx.lifecycle.ViewModelProvider
 import com.idz.ChallengeZone.databinding.FragmentStudentsListBinding
+import androidx.fragment.app.viewModels
 
 interface OnItemClickListener {
     fun onItemClick(position: Int)
@@ -23,8 +24,8 @@ interface OnItemClickListener {
 }
 
 class StudentsListFragment : Fragment() {
-//    private var students: List<Student>? = null
-    private var viewModel: StudentsListViewModel? = null
+
+    private val viewModel: StudentsListViewModel by viewModels()
     private var adapter: StudentsRecyclerAdapter? = null
     private var binding: FragmentStudentsListBinding? = null
 
@@ -34,24 +35,30 @@ class StudentsListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentStudentsListBinding.inflate(inflater, container, false)
-        viewModel = ViewModelProvider(this)[StudentsListViewModel::class.java]
+//        viewModel = ViewModelProvider(this)[StudentsListViewModel::class.java]
 
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_students_list, container, false)
-//
-//       students = Model.shared.students
-//
-//        val recyclerView: RecyclerView = view.findViewById(R.id.students_list_fragment_recycler_view)
-//        recyclerView.setHasFixedSize(true)
+
         binding?.recyclerView?.setHasFixedSize(true)
 
         val layoutManager = LinearLayoutManager(context)
-//        recyclerView.layoutManager = layoutManager
-//        val adapter = StudentsRecyclerAdapter(students)
+
         binding?.recyclerView?.layoutManager = layoutManager
 
-        adapter = StudentsRecyclerAdapter(viewModel?.students)
-
+//        adapter = StudentsRecyclerAdapter(viewModel?.students)
+        adapter = StudentsRecyclerAdapter(viewModel.students.value)
+        viewModel.students.observe(viewLifecycleOwner) {
+            adapter?.update(it)
+            adapter?.notifyDataSetChanged()
+            binding?.progressBar?.visibility = View.GONE
+        }
+        binding?.swipeToRefresh?.setOnRefreshListener {
+            viewModel.refreshAllStudents()
+        }
+        Model.shared.loadingState.observe(viewLifecycleOwner) { state ->
+            binding?.swipeToRefresh?.isRefreshing = state == Model.LoadingState.LOADING
+        }
 
         adapter?.listener = object : OnItemClickListener{
             override fun onItemClick(position: Int) {
@@ -91,13 +98,15 @@ override fun onDestroy() {
 }
 private fun getAllStudents() {
     binding?.progressBar?.visibility = View.VISIBLE
-    Model.shared.getAllStudents {
-        viewModel?.updateStudents(it)
-        adapter?.set(it)
-        adapter?.notifyDataSetChanged()
+//    Model.shared.getAllStudents {
+//        viewModel?.updateStudents(it)
+//        adapter?.set(it)
+//        adapter?.notifyDataSetChanged()
+//
+//        binding?.progressBar?.visibility = View.GONE
+//    }
+    viewModel.refreshAllStudents()
 
-        binding?.progressBar?.visibility = View.GONE
-    }
 }
 
 
