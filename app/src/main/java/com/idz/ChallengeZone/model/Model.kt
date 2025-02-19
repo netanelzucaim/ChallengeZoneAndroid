@@ -4,12 +4,10 @@ import android.os.Looper
 import androidx.core.os.HandlerCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.google.android.gms.auth.api.signin.internal.Storage
 import com.idz.ChallengeZone.model.dao.AppLocalDb
 import com.idz.ChallengeZone.model.dao.AppLocalDbRepository
 import java.util.concurrent.Executors
 
-typealias StudentsCallback = (List<Student>) -> Unit
 typealias EmptyCallback = () -> Unit
 
 interface GetAllStudentsListener {
@@ -32,6 +30,8 @@ class Model private constructor() {
     private var executor = Executors.newSingleThreadExecutor()
     private var mainHandler = HandlerCompat.createAsync(Looper.getMainLooper())
     val students: LiveData<List<Student>> = database.studentDao().getAllStudent()
+    val posts: LiveData<List<Post>> = database.postDao().getAllPosts()
+
     val loadingState: MutableLiveData<LoadingState> = MutableLiveData<LoadingState>()
 
     private val cloudinaryModel = CloudinaryModel()
@@ -75,6 +75,47 @@ class Model private constructor() {
                         if (!uri.isNullOrBlank()) {
                             val st = student.copy(avatarUrl = uri)
                             firebaseModel.add(st, callback)
+                        } else {
+                            callback()
+                        }
+                    },
+                )
+            } ?: callback()
+        }
+    }
+
+    fun refreshAllPosts() {
+        loadingState.postValue(LoadingState.LOADING)
+        var lastUpdated: Long = Post.lastUpdated
+        firebaseModel.getAllPosts(lastUpdated) { list ->
+            executor.execute {
+                var currentTime = lastUpdated
+                for (post in list) {
+                    database.postDao().insertPosts(post)
+                    post.lastUpdated?.let {
+                        if (currentTime < it) {
+                            currentTime = it
+                        }
+                    }
+                }
+                Post.lastUpdated = currentTime
+                loadingState.postValue(LoadingState.LOADED)
+            }
+        }
+    }
+
+
+    fun addPost(post: Post, image: Bitmap?, storage: Storage, callback: EmptyCallback) {
+        firebaseModel.addPost(post) {
+            image?.let {
+                uploadTo(
+                    storage,
+                    image = image,
+                    name = post.id,
+                    callback = { uri ->
+                        if (!uri.isNullOrBlank()) {
+                            val po = post.copy(postPic = uri)
+                            firebaseModel.addPost(po, callback)
                         } else {
                             callback()
                         }
@@ -157,6 +198,14 @@ class Model private constructor() {
 
     fun update(student: Student, callback: EmptyCallback) {
         firebaseModel.update(student, callback)
+    }
+
+    fun deletePost(post: Post, callback: EmptyCallback) {
+        firebaseModel.deletePost(post, callback)
+    }
+
+    fun updatePost(post: Post, callback: EmptyCallback) {
+        firebaseModel.updatePost(post, callback)
     }
 
     private fun uploadImageToFirebase(

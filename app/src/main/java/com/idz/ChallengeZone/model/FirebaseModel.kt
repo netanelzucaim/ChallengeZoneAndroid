@@ -15,8 +15,11 @@ import com.google.firebase.storage.ktx.storage
 import com.idz.ChallengeZone.base.Constants
 import com.idz.ChallengeZone.base.EmptyCallback
 import com.idz.ChallengeZone.base.StudentsCallback
+import com.idz.ChallengeZone.base.PostsCallback
 import com.idz.ChallengeZone.utils.extensions.toFirebaseTimestamp
 import java.io.ByteArrayOutputStream
+typealias PostsCallback = (List<Post>) -> Unit
+
 
 class FirebaseModel {
 
@@ -29,71 +32,9 @@ class FirebaseModel {
             setLocalCacheSettings(memoryCacheSettings {  })
         }
         database.firestoreSettings = settings
-//
-//        auth.createUserWithEmailAndPassword("talzi@colman.ac.il", "supperStrong").addOnCompleteListener {
-//            if(it.isSuccessful){
-//                Log.i("TAG", "Successfully registered")
-//
-//            }else {
-//                Log.i("TAG", auth.currentUser?.uid ?: "No use uuid")
-//
-//            }
-//        }
-
-//        //        auth.createUserWithEmailAndPassword("talzi@colman.ac.il", "supperStrong")
-//        auth.currentUser?.uid?.let {
-//            Log.i("TAG", auth.currentUser?.uid ?: "No use uuid")
-//            val json = hashMapOf(
-//                "name" to "Tal",
-//                "email" to "talzi@colman.ac.il"
-//            )
-//            database.collection("users_nati").document(it).set(json)
-//                .addOnCompleteListener {
-//                    Log.i("TAG", auth.currentUser?.uid + "Saved" ?: "No use uuid")
-//                }
-//        }
-
     }
 
-    /*
-    val db = Firebase.firestore
-    // Create a new user with a first and last name
-    val user = hashMapOf(
-        "first" to "Ada",
-        "last" to "Lovelace",
-        "born" to 1815,
-    )
-    // Add a new document with a generated ID
-    db.collection("users")
-    .add(user)
-    .addOnSuccessListener { documentReference ->
-        Log.d("TAG", "DocumentSnapshot added with ID: ${documentReference.id}")
-    }
-    .addOnFailureListener { e ->
-        Log.w("TAG", "Error adding document", e)
-    }
-     */
-//    fun signUpUser( callback: EmptyCallback) {
-//        // Create a new user with a first and last name
-//        val user = hashMapOf(
-//            "first" to "Ada",
-//            "last" to "Lovelace",
-//            "born" to 1815,
-//        )
-//        // Add a new document with a generated ID
-//        database.collection("users")
-//            .add(user)
-//            .addOnSuccessListener { documentReference ->
-//                Log.d("TAG", "DocumentSnapshot added with ID: ${documentReference.id}")
-//            }
-//            .addOnFailureListener { e ->
-//                Log.w("TAG", "Error adding document", e)
-//            }
-//
-//    }
-
-
-        fun getAllStudents(sinceLastUpdated: Long, callback: StudentsCallback) {
+    fun getAllStudents(sinceLastUpdated: Long, callback: StudentsCallback) {
         database.collection(Constants.Collections.STUDENTS)
             .whereGreaterThanOrEqualTo(Student.LAST_UPDATED,sinceLastUpdated.toFirebaseTimestamp)
             .get()
@@ -108,8 +49,37 @@ class FirebaseModel {
                         callback(students)
                     }
                     false -> callback(listOf())
+                }
             }
-        }
+    }
+
+    fun getAllPosts(sinceLastUpdated: Long, callback: PostsCallback) {
+        database.collection(Constants.Collections.POSTS)
+            .whereGreaterThanOrEqualTo(Post.LAST_UPDATED,sinceLastUpdated.toFirebaseTimestamp)
+            .get()
+            .addOnCompleteListener {
+                when (it.isSuccessful) {
+                    true -> {
+                        val posts: MutableList<Post> = mutableListOf()
+                        for (json in it.result) {
+                            posts.add(Post.fromJSON(json.data))
+                        }
+                        Log.d("TAG", posts.size.toString())
+                        callback(posts)
+                    }
+                    false -> callback(listOf())
+                }
+            }
+    }
+
+    fun addPost(post: Post, callback: EmptyCallback) {
+        database.collection(Constants.Collections.POSTS).document(post.id).set(post.json)
+            .addOnCompleteListener {
+                callback()
+            }
+            .addOnFailureListener {
+                Log.d("TAG", it.toString() + it.message)
+            }
     }
 
     fun add(student: Student, callback: EmptyCallback) {
@@ -144,6 +114,21 @@ class FirebaseModel {
                 callback()
             }
     }
+    fun deletePost(post: Post, callback: EmptyCallback) {
+        database.collection(Constants.Collections.POSTS).document(post.id).delete()
+            .addOnCompleteListener {
+                callback()
+            }
+    }
+
+    fun updatePost(post: Post, callback: EmptyCallback) {
+        database.collection(Constants.Collections.POSTS).document(post.id).set(post.json)
+            .addOnCompleteListener {
+                callback()
+            }
+    }
+
+
     fun uploadImage(image: Bitmap, name: String, callback: (String?) -> Unit) {
         val storageRef = storage.reference
         val imageRef = storageRef.child("images/$name.jpg")
@@ -155,7 +140,7 @@ class FirebaseModel {
         uploadTask.addOnFailureListener {
             callback(null)
         }.addOnSuccessListener { taskSnapshot ->
-               imageRef.downloadUrl.addOnSuccessListener { uri ->
+            imageRef.downloadUrl.addOnSuccessListener { uri ->
                 callback(uri.toString())
             }
         }
@@ -228,8 +213,8 @@ class FirebaseModel {
             .addOnCompleteListener(OnCompleteListener<Void?> {
                 auth.createUserWithEmailAndPassword(newUser.email, password)
                     .addOnCompleteListener(OnCompleteListener<AuthResult?> {
-                       // val profile =
-                       //     UserProfileChangeRequest.Builder().setDisplayName(newUser.userName)
+                        // val profile =
+                        //     UserProfileChangeRequest.Builder().setDisplayName(newUser.userName)
                         //        .build()
                         //mAuth.getCurrentUser().updateProfile(profile)
                         //Model.getInstance().username = newUser.userName
@@ -241,7 +226,7 @@ class FirebaseModel {
                     })
             })
             .addOnFailureListener( OnFailureListener {
-                    Log.d("TAG", it.toString() + it.message)
+                Log.d("TAG", it.toString() + it.message)
             })
     }
 

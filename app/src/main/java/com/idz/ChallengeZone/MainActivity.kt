@@ -56,7 +56,7 @@ class MainActivity : AppCompatActivity() {
 
         // Show/hide menu items based on current fragment
         menu?.findItem(R.id.editStudentFragment)?.isVisible = currentFragment == R.id.studentDetailsFragment
-        menu?.findItem(R.id.addStudentFragment)?.isVisible = currentFragment == R.id.studentListFragment
+        menu?.findItem(R.id.addStudentFragment)?.isVisible = currentFragment == R.id.postListFragment
 
         return super.onPrepareOptionsMenu(menu)
     }

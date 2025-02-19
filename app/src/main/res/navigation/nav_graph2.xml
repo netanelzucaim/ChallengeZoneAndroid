@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/signInFragment">
+
+    <fragment
+        android:id="@+id/signInFragment"
+        android:name="com.idz.ChallengeZone.SignInFragment"
+        android:label="fragment_sign_in"
+        tools:layout="@layout/fragment_sign_in" >
+        <action
+            android:id="@+id/action_signInFragment_to_signUpFragment"
+            app:destination="@id/signUpFragment" />
+        <action
+            android:id="@+id/action_signInFragment_to_postsListFragment"
+            app:destination="@id/postListFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/signUpFragment"
+        android:name="com.idz.ChallengeZone.SignUpFragment"
+        android:label="fragment_sign_up"
+        tools:layout="@layout/fragment_sign_in" >
+        <action
+            android:id="@+id/action_signUpFragment_to_signInFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/postListFragment"
+        android:name="com.idz.ChallengeZone.PostsListFragment"
+        android:label="posts list"
+        tools:layout="@layout/fragment_posts_list">
+        <action
+            android:id="@+id/action_postListFragment_to_studentDetailsFragment"
+            app:destination="@id/studentDetailsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/addStudentFragment"
+        android:name="com.idz.ChallengeZone.AddStudentFragment"
+        android:label="new student"
+        tools:layout="@layout/fragment_add_student" />
+
+    <fragment
+        android:id="@+id/studentDetailsFragment"
+        android:name="com.idz.ChallengeZone.StudentDetailsFragment"
+        android:label="student details"
+        tools:layout="@layout/fragment_student_details">
+        <argument
+            android:name="student"
+            app:argType="com.idz.ChallengeZone.model.Student" />
+        <action
+            android:id="@+id/action_studentDetailsFragment_to_editStudentFragment"
+            app:destination="@id/editStudentFragment" />
+    </fragment>
+
+    <argument
+        android:name="name"
+        app:argType="string" />
+
+    <action
+        android:id="@+id/action_global_addStudentFragment"
+        app:destination="@id/addStudentFragment" />
+
+    <fragment
+        android:id="@+id/editStudentFragment"
+        android:name="com.idz.ChallengeZone.EditStudentFragment"
+        android:label="fragment_edit_student"
+        tools:layout="@layout/fragment_edit_student" >
+        <argument
+            android:name="student"
+            app:argType="com.idz.ChallengeZone.model.Student" />
+    </fragment>
+</navigation>

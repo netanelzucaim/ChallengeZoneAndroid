@@ -61,7 +61,7 @@ class SignInFragment : Fragment() {
 
             Model.shared.logIn(username, password) { isSuccessful ->
                 if (isSuccessful == true) {
-                    val action = SignInFragmentDirections.actionSignInFragmentToStudentsListFragment()
+                    val action = SignInFragmentDirections.actionSignInFragmentToPostsListFragment()
                     binding?.root?.let {
                         Navigation.findNavController(it).navigate(action)
                     }
@@ -73,10 +73,10 @@ class SignInFragment : Fragment() {
     }
     private fun setupSignUpButton() {
         binding?.signUpButton?.setOnClickListener {
-                    val action = SignInFragmentDirections.actionSignInFragmentToSignUpFragment()
-                    binding?.root?.let {
-                        Navigation.findNavController(it).navigate(action)
-                    }
+            val action = SignInFragmentDirections.actionSignInFragmentToSignUpFragment()
+            binding?.root?.let {
+                Navigation.findNavController(it).navigate(action)
+            }
         }
     }
 
@@ -88,7 +88,7 @@ class SignInFragment : Fragment() {
             .create().show()
     }
 
-//    private fun signIn(email: String, password: String) {
+    //    private fun signIn(email: String, password: String) {
 //        auth.signInWithEmailAndPassword(email, password)
 //            .addOnCompleteListener(requireActivity()) { task ->
 //                if (task.isSuccessful) {
