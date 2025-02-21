@@ -32,6 +32,7 @@ data class User(
         parcel.writeString(password)
         parcel.writeString(avatarUrl)
         parcel.writeString(email)
+        parcel.writeLong(lastUpdated ?: 0)
     }
 
     override fun describeContents(): Int {
@@ -50,7 +51,7 @@ data class User(
                         edit().putLong(LOCAL_LAST_UPDATED_KEY, value).apply()
                     }
             }
-        const val USER_NAME_KEY = "name"
+        const val USER_NAME_KEY = "userName"
         const val PASSWORD_KEY = "password"
         const val AVATAR_URL_KEY = "avatarUrl"
         const val EMAIL_KEY = "email"

@@ -11,7 +11,7 @@
 
     <!-- Challenge Logo -->
     <ImageView
-        android:id="@+id/ivChallengeLogo"
+        android:id="@+id/avatarImageView"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:src="@drawable/challenges_button"
@@ -25,7 +25,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/ivChallengeLogo"
+        app:layout_constraintStart_toEndOf="@id/avatarImageView"
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
@@ -64,7 +64,7 @@
         android:layout_marginTop="8dp"
         android:text="The First Challenge For Today: Hold a plank position for 2 minutes"
         android:textSize="14sp"
-        app:layout_constraintTop_toBottomOf="@id/ivChallengeLogo"
+        app:layout_constraintTop_toBottomOf="@id/avatarImageView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

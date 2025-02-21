@@ -7,7 +7,7 @@
         android:icon="@android:drawable/btn_star_big_on"
         android:title="list" />
     <item
-        android:id="@+id/addStudentFragment"
+        android:id="@+id/newPostFragment"
         android:icon="@android:drawable/ic_input_add"
         android:title="add" />
     <item

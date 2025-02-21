@@ -53,9 +53,7 @@ class PostsListFragment : Fragment() {
             adapter?.notifyDataSetChanged()
             binding?.progressBar?.visibility = View.GONE
         }
-        binding?.swipeToRefresh?.setOnRefreshListener {
-            viewModel.refreshAllPosts()
-        }
+        binding?.swipeToRefresh?.setOnRefreshListener(viewModel::refreshAllPosts)
         Model.shared.loadingState.observe(viewLifecycleOwner) { state ->
             binding?.swipeToRefresh?.isRefreshing = state == Model.LoadingState.LOADING
         }

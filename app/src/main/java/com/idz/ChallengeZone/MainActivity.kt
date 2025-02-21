@@ -55,8 +55,8 @@ class MainActivity : AppCompatActivity() {
         val currentFragment = navController?.currentDestination?.id
 
         // Show/hide menu items based on current fragment
-        menu?.findItem(R.id.editStudentFragment)?.isVisible = currentFragment == R.id.studentDetailsFragment
-        menu?.findItem(R.id.addStudentFragment)?.isVisible = currentFragment == R.id.postListFragment
+//        menu?.findItem(R.id.editStudentFragment)?.isVisible = currentFragment == R.id.studentDetailsFragment
+        menu?.findItem(R.id.newPostFragment)?.isVisible = currentFragment == R.id.postListFragment
 
         return super.onPrepareOptionsMenu(menu)
     }

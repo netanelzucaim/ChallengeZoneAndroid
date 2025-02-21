@@ -5,6 +5,7 @@ import android.util.Log
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.firebase.auth.AuthResult
+import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.firestoreSettings
@@ -14,11 +15,12 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.idz.ChallengeZone.base.Constants
 import com.idz.ChallengeZone.base.EmptyCallback
-import com.idz.ChallengeZone.base.StudentsCallback
 import com.idz.ChallengeZone.base.PostsCallback
 import com.idz.ChallengeZone.utils.extensions.toFirebaseTimestamp
 import java.io.ByteArrayOutputStream
+
 typealias PostsCallback = (List<Post>) -> Unit
+typealias UsersCallback = (List<User>) -> Unit
 
 
 class FirebaseModel {
@@ -34,25 +36,6 @@ class FirebaseModel {
         database.firestoreSettings = settings
     }
 
-    fun getAllStudents(sinceLastUpdated: Long, callback: StudentsCallback) {
-        database.collection(Constants.Collections.STUDENTS)
-            .whereGreaterThanOrEqualTo(Student.LAST_UPDATED,sinceLastUpdated.toFirebaseTimestamp)
-            .get()
-            .addOnCompleteListener {
-                when (it.isSuccessful) {
-                    true -> {
-                        val students: MutableList<Student> = mutableListOf()
-                        for (json in it.result) {
-                            students.add(Student.fromJSON(json.data))
-                        }
-                        Log.d("TAG", students.size.toString())
-                        callback(students)
-                    }
-                    false -> callback(listOf())
-                }
-            }
-    }
-
     fun getAllPosts(sinceLastUpdated: Long, callback: PostsCallback) {
         database.collection(Constants.Collections.POSTS)
             .whereGreaterThanOrEqualTo(Post.LAST_UPDATED,sinceLastUpdated.toFirebaseTimestamp)
@@ -62,6 +45,7 @@ class FirebaseModel {
                     true -> {
                         val posts: MutableList<Post> = mutableListOf()
                         for (json in it.result) {
+                            Log.d("TAG","the number of posts are changed to ${json.data}")
                             posts.add(Post.fromJSON(json.data))
                         }
                         Log.d("TAG", posts.size.toString())
@@ -70,6 +54,33 @@ class FirebaseModel {
                     false -> callback(listOf())
                 }
             }
+//            .addOnFailureListener(OnFailureListener {
+//                Log.d("TAG", it.toString() + it.message)
+//            })
+    }
+
+    fun getAllUsers(sinceLastUpdated: Long, callback: UsersCallback) {
+        database.collection(Constants.Collections.USERS)
+            .whereGreaterThanOrEqualTo(User.LAST_UPDATED,sinceLastUpdated.toFirebaseTimestamp)
+            .get()
+            .addOnCompleteListener {
+                when (it.isSuccessful) {
+                    true -> {
+                        val users: MutableList<User> = mutableListOf()
+                        for (json in it.result) {
+                            Log.d("TAG","the number of users are changed to ${json.data}")
+                            Log.d("TAG","the user last updated is $sinceLastUpdated")
+                            users.add(User.fromJSON(json.data))
+                        }
+                        Log.d("TAG", users.size.toString())
+                        callback(users)
+                    }
+                    false -> callback(listOf())
+                }
+            }
+            .addOnFailureListener(OnFailureListener {
+                Log.d("TAG", it.toString() + it.message)
+            })
     }
 
     fun addPost(post: Post, callback: EmptyCallback) {
@@ -82,15 +93,15 @@ class FirebaseModel {
             }
     }
 
-    fun add(student: Student, callback: EmptyCallback) {
-        database.collection(Constants.Collections.STUDENTS).document(student.id).set(student.json)
-            .addOnCompleteListener {
-                callback()
-            }
-            .addOnFailureListener {
-                Log.d("TAG", it.toString() + it.message)
-            }
-    }
+//    fun add(student: Student, callback: EmptyCallback) {
+//        database.collection(Constants.Collections.STUDENTS).document(student.id).set(student.json)
+//            .addOnCompleteListener {
+//                callback()
+//            }
+//            .addOnFailureListener {
+//                Log.d("TAG", it.toString() + it.message)
+//            }
+//    }
     fun addUser(user: User, callback: EmptyCallback) {
         database.collection(Constants.Collections.USERS).document(user.userName).set(user.json)
             .addOnCompleteListener {
@@ -101,19 +112,19 @@ class FirebaseModel {
             }
     }
 
-    fun delete(student: Student, callback: EmptyCallback) {
-        database.collection(Constants.Collections.STUDENTS).document(student.id).delete()
-            .addOnCompleteListener {
-                callback()
-            }
-    }
-
-    fun update(student: Student, callback: EmptyCallback) {
-        database.collection(Constants.Collections.STUDENTS).document(student.id).set(student.json)
-            .addOnCompleteListener {
-                callback()
-            }
-    }
+//    fun delete(student: Student, callback: EmptyCallback) {
+//        database.collection(Constants.Collections.STUDENTS).document(student.id).delete()
+//            .addOnCompleteListener {
+//                callback()
+//            }
+//    }
+//
+//    fun update(student: Student, callback: EmptyCallback) {
+//        database.collection(Constants.Collections.STUDENTS).document(student.id).set(student.json)
+//            .addOnCompleteListener {
+//                callback()
+//            }
+//    }
     fun deletePost(post: Post, callback: EmptyCallback) {
         database.collection(Constants.Collections.POSTS).document(post.id).delete()
             .addOnCompleteListener {
@@ -213,11 +224,11 @@ class FirebaseModel {
             .addOnCompleteListener(OnCompleteListener<Void?> {
                 auth.createUserWithEmailAndPassword(newUser.email, password)
                     .addOnCompleteListener(OnCompleteListener<AuthResult?> {
-                        // val profile =
-                        //     UserProfileChangeRequest.Builder().setDisplayName(newUser.userName)
-                        //        .build()
-                        //mAuth.getCurrentUser().updateProfile(profile)
-                        //Model.getInstance().username = newUser.userName
+                         val profile =
+                             UserProfileChangeRequest.Builder().setDisplayName(newUser.userName)
+                                .build()
+                        auth.getCurrentUser()?.updateProfile(profile)
+                        Model.shared.username = newUser.userName
                         auth.signInWithEmailAndPassword(newUser.email, password)
                             .addOnCompleteListener(
                                 OnCompleteListener<AuthResult?> {
@@ -230,5 +241,10 @@ class FirebaseModel {
             })
     }
 
+
+    fun getLoggedUserUsername(): String? {
+        val username: String? = auth.currentUser?.displayName
+        return username
+    }
 
 }

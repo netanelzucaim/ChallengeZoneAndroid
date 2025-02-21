@@ -3,8 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <!--tools:context=".ui.NewPostFragment" -->
+    android:layout_height="match_parent"
+    android:id="@+id/main"
+    tools:context=".NewPostFragment">
+
 
     <!-- Header Text -->
     <TextView
@@ -33,7 +35,7 @@
 
     <!-- Post Image -->
     <ImageView
-        android:id="@+id/ivPostImage"
+        android:id="@+id/postPicImageView"
         android:layout_width="0dp"
         android:layout_height="200dp"
         android:layout_marginTop="16dp"
@@ -46,8 +48,8 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- Caption -->
-    <TextView
-        android:id="@+id/tvCaption"
+    <EditText
+        android:id="@+id/contentEditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -55,7 +57,7 @@
         android:layout_marginEnd="16dp"
         android:text="This is me doing the plunk Challenge of today. Let's get some motivation 💪"
         android:textSize="16sp"
-        app:layout_constraintTop_toBottomOf="@id/ivPostImage"
+        app:layout_constraintTop_toBottomOf="@id/postPicImageView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -70,7 +72,7 @@
         android:text="Create Post"
         android:backgroundTint="#000000"
         android:textColor="#FFFFFF"
-        app:layout_constraintTop_toBottomOf="@id/tvCaption"
+        app:layout_constraintTop_toBottomOf="@id/contentEditText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -125,6 +127,27 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Profile"
             android:src="@drawable/profile_button" />
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+        <ImageButton
+            android:id="@+id/takePhotoButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/add_photo"
+            app:layout_constraintBottom_toTopOf="@+id/contentEditText"
+            app:layout_constraintEnd_toEndOf="parent" />
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

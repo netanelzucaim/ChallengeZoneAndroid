@@ -4,14 +4,14 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.idz.ChallengeZone.base.MyApplication
 import com.idz.ChallengeZone.model.Post
-import com.idz.ChallengeZone.model.Student
+import com.idz.ChallengeZone.model.User
+
 //@Database(entities = [Student::class], version = 1)
-@Database(entities = [Student::class, Post::class], version = 4)
+@Database(entities = [Post::class, User::class], version = 6)
 
 abstract class AppLocalDbRepository: RoomDatabase() {
-    abstract fun studentDao(): StudentDao
     abstract fun postDao(): PostDao
-
+    abstract fun userDao(): UserDao
 }
 //class AppLocalDb {
 object AppLocalDb {

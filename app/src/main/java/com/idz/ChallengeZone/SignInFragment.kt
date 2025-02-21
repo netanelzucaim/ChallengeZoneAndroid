@@ -21,7 +21,6 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.idz.ChallengeZone.databinding.FragmentAddStudentBinding
-import com.idz.ChallengeZone.model.Student
 import com.idz.ChallengeZone.databinding.FragmentSignInBinding
 import com.squareup.picasso.Picasso
 import androidx.navigation.fragment.findNavController
