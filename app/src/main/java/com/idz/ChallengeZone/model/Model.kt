@@ -29,6 +29,7 @@ class Model private constructor() {
 //    val students: LiveData<List<Student>> = database.studentDao().getAllStudent()
     val posts: LiveData<List<Post>> = database.postDao().getAllPosts()
     val users: LiveData<List<User>> = database.userDao().getAllUsers()
+    val userLagziel: LiveData<User> = database.userDao().getUserByUsername("lagziel")
 
     val loadingState: MutableLiveData<LoadingState> = MutableLiveData<LoadingState>()
 
@@ -64,6 +65,7 @@ class Model private constructor() {
     fun refreshAllUsers() {
         Log.d("TAG", "refreshAllUsers")
         loadingState.postValue(LoadingState.LOADING)
+        Log.d("TAG","user last updated is ${User.lastUpdated}")
         var lastUpdated: Long = User.lastUpdated
         firebaseModel.getAllUsers(lastUpdated) { list ->
             executor.execute {
@@ -253,35 +255,35 @@ class Model private constructor() {
         )
     }
 
-
-    private var user: User? = null
+    private var user: MutableLiveData<User?> = MutableLiveData()
     var username: String? = null
-    fun getLoggedUser(): User {
-        Log.d("TAG","loggedUSer")
+    fun getLoggedUser(): LiveData<User?> {
+        Log.d("TAG", "loggedUser")
         val username: String? = firebaseModel.getLoggedUserUsername()
         if (username != null) {
             this.username = username
         }
-        if (user == null) {
+        if (user.value == null) {
             this.username?.let {
-                user = database.userDao().getUserByUsername(it)
+                user.postValue(database.userDao().getUserByUsername(it).value)
                 refreshAllUsers()
             }
         }
-        return user ?: throw IllegalStateException("User not found")
+        return user
     }
-
-    var otherUser: User? = null
-    fun getOtherUser(username: String?, callback: (User?) -> Unit) {
-        Log.d("TAG","get username of $username")
-        executor.execute {
-            if (username != null) {
-                otherUser = database.userDao().getUserByUsername(username)
+    var otherUser: MutableLiveData<User?> = MutableLiveData()
+    fun getOtherUser(username: String?): LiveData<User?> {
+        val result = MutableLiveData<User?>()
+        username?.let {
+            database.userDao().getUserByUsername(it).observeForever { otherUserValue ->
+                Log.d("TAG", "get username of $username")
+                Log.d("TAG", "otherUsername is $username and its details are $otherUserValue")
+                mainHandler.post {
+                    result.postValue(otherUserValue)
+                }
             }
-            mainHandler.post {
-                callback(otherUser)
-            }
-        }
+        } ?: result.postValue(null)
+        return result
     }
 }
 

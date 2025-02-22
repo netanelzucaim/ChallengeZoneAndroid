@@ -2,29 +2,31 @@ package com.idz.ChallengeZone
 
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.CheckBox
-import android.widget.EditText
-import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
+import com.idz.ChallengeZone.databinding.FragmentNewPostBinding
 import com.idz.ChallengeZone.model.Model
 import com.idz.ChallengeZone.model.Post
-import com.idz.ChallengeZone.databinding.FragmentNewPostBinding
+import com.idz.ChallengeZone.model.User
+import java.util.UUID
 
 
 class NewPostFragment : Fragment() {
     private var binding: FragmentNewPostBinding? = null
     private var cameraLauncher: ActivityResultLauncher<Void?>? = null
     private var didSetProfileImage = false
-
+    private val userViewModel: UserViewModel by viewModels()
+    var user: User? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
@@ -39,6 +41,13 @@ class NewPostFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
+        userViewModel.fetchUser()?.observe(viewLifecycleOwner) { newUser ->
+            Log.d("TAG", "current logged User is: $user")
+            user = newUser
+        }
+
+
         binding = FragmentNewPostBinding.inflate(inflater, container, false)
         binding?.btnCreatePost?.setOnClickListener(::onSaveClicked)
 
@@ -52,7 +61,6 @@ class NewPostFragment : Fragment() {
             cameraLauncher?.launch(null)
         }
 
-
         return binding?.root
 
     }
@@ -63,8 +71,8 @@ class NewPostFragment : Fragment() {
 
 private fun onSaveClicked(view: View) {
     val post = Post(
-        id =  "1",
-        sender = Model.shared.username.toString(),
+         id  = UUID.randomUUID().toString(),
+        sender = Model.shared.getLoggedUser().value?.userName ?: "",
         content = binding?.contentEditText?.text?.toString() ?: "",
         postPic = ""
     )
@@ -76,13 +84,11 @@ private fun onSaveClicked(view: View) {
 
         Model.shared.addPost(post, bitmap, Model.Storage.CLOUDINARY) {
             binding?.progressBar?.visibility = View.GONE
-            Navigation.findNavController(view).popBackStack()
-        }
+            Navigation.findNavController(view).popBackStack()        }
     } else {
         Model.shared.addPost(post, null, Model.Storage.CLOUDINARY) {
             binding?.progressBar?.visibility = View.GONE
-            Navigation.findNavController(view).popBackStack()
-        }
+            Navigation.findNavController(view).popBackStack()        }
     }
 }
 }

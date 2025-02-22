@@ -29,8 +29,7 @@ class PostViewHolder(
         this.post = post
         binding.senderTextView?.text = post?.sender
         binding.contentTextView?.text = post?.content
-//        Model.shared.users.observeForever { users ->
-//            users?.forEach { user ->
+        binding.dateTextView?.text = post?.lastUpdated?.let { java.text.SimpleDateFormat("dd/MM/yyyy HH:mm", java.util.Locale.getDefault()).format(java.util.Date(it)) }//            users?.forEach { user ->
 //                Log.d("TAG", "User: ${user.userName}")
 //            }
 //        }
@@ -42,8 +41,29 @@ class PostViewHolder(
                     .into(binding.postPicImageView)
             }
         }
+        Model.shared.users.observeForever { users ->
+            users?.forEach { user ->
+                Log.d("TAG", "User from dao is: ${user.json}")
 
-        Model.shared.getOtherUser(post?.sender) { user ->
+            }
+        }
+//        Model.shared.getOtherUser(post?.sender) { user ->
+//            user?.avatarUrl?.let { avatarUrl ->
+//                if (avatarUrl.isNotBlank()) {
+//                    Picasso.get()
+//                        .load(avatarUrl)
+//                        .placeholder(R.drawable.avatar)
+//                        .into(binding.avatarImageView)
+//                }
+//            }
+//        }
+        Model.shared.otherUser.observeForever { user ->
+                Log.d("TAG", "User from dao of lagziel is: ${user!!.json}")
+        }
+
+
+        Model.shared.getOtherUser(post?.sender).observeForever { user ->
+            Log.d("TAG", "User from dao avatarUrl is: ${user?.json}")
             user?.avatarUrl?.let { avatarUrl ->
                 if (avatarUrl.isNotBlank()) {
                     Picasso.get()

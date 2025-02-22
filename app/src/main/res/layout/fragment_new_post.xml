@@ -33,50 +33,68 @@
         app:layout_constraintTop_toBottomOf="@id/tvHeader"
         app:layout_constraintStart_toStartOf="parent" />
 
+
     <!-- Post Image -->
+
+    <!-- Caption -->
+
+    <!-- Create Post Button -->
+
+    <!-- Bottom Navigation Bar -->
+    <ImageButton
+        android:id="@+id/takePhotoButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleType="fitCenter"
+        android:src="@drawable/add_photo"
+        app:layout_constraintBottom_toTopOf="@+id/contentEditText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/postPicImageView"
+        app:layout_constraintVertical_bias="0.0" />
+
     <ImageView
         android:id="@+id/postPicImageView"
         android:layout_width="0dp"
         android:layout_height="200dp"
-        android:layout_marginTop="16dp"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
-        android:src="@drawable/post_image"
         android:scaleType="centerCrop"
-        app:layout_constraintTop_toBottomOf="@id/ivProfilePicture"
+        android:src="@drawable/post_image"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/ivProfilePicture" />
 
-    <!-- Caption -->
     <EditText
         android:id="@+id/contentEditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="72dp"
         android:layout_marginEnd="16dp"
         android:text="This is me doing the plunk Challenge of today. Let's get some motivation 💪"
         android:textSize="16sp"
-        app:layout_constraintTop_toBottomOf="@id/postPicImageView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/postPicImageView" />
 
-    <!-- Create Post Button -->
     <Button
         android:id="@+id/btnCreatePost"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="44dp"
         android:layout_marginEnd="16dp"
-        android:text="Create Post"
         android:backgroundTint="#000000"
+        android:text="Create Post"
         android:textColor="#FFFFFF"
-        app:layout_constraintTop_toBottomOf="@id/contentEditText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/contentEditText" />
 
-    <!-- Bottom Navigation Bar -->
     <LinearLayout
         android:id="@+id/bottomNav"
         android:layout_width="0dp"
@@ -137,16 +155,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-        <ImageButton
-            android:id="@+id/takePhotoButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/add_photo"
-            app:layout_constraintBottom_toTopOf="@+id/contentEditText"
-            app:layout_constraintEnd_toEndOf="parent" />
+
 
     </LinearLayout>
 
