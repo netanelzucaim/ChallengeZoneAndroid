@@ -1,4 +1,4 @@
-//package com.idz.ChallengeZone
+package com.idz.ChallengeZone.studentFragments//package com.idz.ChallengeZone
 //
 //import android.content.Intent
 //import android.os.Bundle
@@ -67,7 +67,6 @@
 //        binding?.progressBar?.visibility = View.VISIBLE
 //        Model.shared.delete(student!!) {
 //            binding?.progressBar?.visibility = View.GONE
-//            Navigation.findNavController(view).popBackStack()
 //            Navigation.findNavController(view).popBackStack()
 //        }
 //    }

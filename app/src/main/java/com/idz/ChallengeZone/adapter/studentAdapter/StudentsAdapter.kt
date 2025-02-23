@@ -1,4 +1,4 @@
-//package com.idz.ChallengeZone.adapter
+package com.idz.ChallengeZone.adapter.studentAdapter//package com.idz.ChallengeZone.adapter
 //
 //import android.view.LayoutInflater
 //import android.view.View

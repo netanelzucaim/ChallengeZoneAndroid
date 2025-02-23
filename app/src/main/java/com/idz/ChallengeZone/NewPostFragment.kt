@@ -70,25 +70,30 @@ class NewPostFragment : Fragment() {
     }
 
 private fun onSaveClicked(view: View) {
-    val post = Post(
-         id  = UUID.randomUUID().toString(),
-        sender = Model.shared.getLoggedUser().value?.userName ?: "",
-        content = binding?.contentEditText?.text?.toString() ?: "",
-        postPic = ""
-    )
-    binding?.progressBar?.visibility = View.VISIBLE
-    if (didSetProfileImage) {
-        binding?.postPicImageView?.isDrawingCacheEnabled = true
-        binding?.postPicImageView?.buildDrawingCache()
-        val bitmap = (binding?.postPicImageView?.drawable as BitmapDrawable).bitmap
+    var currentUser = ""
+    Model.shared.getLoggedUser()?.observe(viewLifecycleOwner) { user ->
+        currentUser = user?.userName ?: ""
+        Log.d("TAG","current user after  observer is $currentUser")
+        val post = Post(
+            id  = UUID.randomUUID().toString(),
+            sender = currentUser,
+            content = binding?.contentEditText?.text?.toString() ?: "",
+            postPic = ""
+        )
+        binding?.progressBar?.visibility = View.VISIBLE
+        if (didSetProfileImage) {
+            binding?.postPicImageView?.isDrawingCacheEnabled = true
+            binding?.postPicImageView?.buildDrawingCache()
+            val bitmap = (binding?.postPicImageView?.drawable as BitmapDrawable).bitmap
 
-        Model.shared.addPost(post, bitmap, Model.Storage.CLOUDINARY) {
-            binding?.progressBar?.visibility = View.GONE
-            Navigation.findNavController(view).popBackStack()        }
-    } else {
-        Model.shared.addPost(post, null, Model.Storage.CLOUDINARY) {
-            binding?.progressBar?.visibility = View.GONE
-            Navigation.findNavController(view).popBackStack()        }
+            Model.shared.addPost(post, bitmap, Model.Storage.CLOUDINARY) {
+                binding?.progressBar?.visibility = View.GONE
+                Navigation.findNavController(view).popBackStack()        }
+        } else {
+            Model.shared.addPost(post, null, Model.Storage.CLOUDINARY) {
+                binding?.progressBar?.visibility = View.GONE
+                Navigation.findNavController(view).popBackStack()        }
+        }
     }
-}
+    }
 }

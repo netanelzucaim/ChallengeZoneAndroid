@@ -1,9 +1,6 @@
-package com.idz.ChallengeZone.adapter
+package com.idz.ChallengeZone.adapter.postAdapter
 
 import android.util.Log
-import android.view.View
-import android.widget.CheckBox
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.idz.ChallengeZone.OnItemClickListenerPosts
 import com.idz.ChallengeZone.R
@@ -60,8 +57,9 @@ class PostViewHolder(
         Model.shared.otherUser.observeForever { user ->
                 Log.d("TAG", "User from dao of lagziel is: ${user!!.json}")
         }
-
-
+//        Model.shared.getLoggedUser().observeForever { user ->
+//            Log.d("TAG", "current user from dao is: ${user?.json}")
+//        }
         Model.shared.getOtherUser(post?.sender).observeForever { user ->
             Log.d("TAG", "User from dao avatarUrl is: ${user?.json}")
             user?.avatarUrl?.let { avatarUrl ->

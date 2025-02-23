@@ -6,15 +6,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
-import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.idz.ChallengeZone.adapter.PostsRecyclerAdapter
+import com.idz.ChallengeZone.adapter.postAdapter.PostsRecyclerAdapter
 import com.idz.ChallengeZone.model.Model
 import com.idz.ChallengeZone.model.Post
-import android.widget.ProgressBar
-import androidx.lifecycle.ViewModelProvider
 import com.idz.ChallengeZone.databinding.FragmentPostsListBinding
 import androidx.fragment.app.viewModels
 

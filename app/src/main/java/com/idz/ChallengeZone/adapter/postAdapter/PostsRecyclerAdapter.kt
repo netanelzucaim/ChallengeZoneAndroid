@@ -1,9 +1,8 @@
-package com.idz.ChallengeZone.adapter
+package com.idz.ChallengeZone.adapter.postAdapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.idz.ChallengeZone.R
 import com.idz.ChallengeZone.model.Post
 
 import  com.idz.ChallengeZone.OnItemClickListenerPosts
