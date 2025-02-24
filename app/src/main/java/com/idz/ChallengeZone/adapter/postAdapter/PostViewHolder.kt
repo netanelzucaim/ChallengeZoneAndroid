@@ -8,7 +8,7 @@ import com.idz.ChallengeZone.databinding.PostListRowBinding
 import com.idz.ChallengeZone.model.Model
 import com.idz.ChallengeZone.model.Post
 import com.squareup.picasso.Picasso
-
+import android.view.View
 class PostViewHolder(
     private val binding: PostListRowBinding,
     listener: OnItemClickListenerPosts?
@@ -23,6 +23,23 @@ class PostViewHolder(
     }
 
     fun bind(post: Post?, position: Int) {
+        Model.shared.getLoggedUser().observeForever { loggedUser ->
+            if (post?.sender == loggedUser?.userName) {
+                Log.d("TAG","post sender is  ${post?.sender}")
+                Log.d("TAG","logged user for deletion is  ${loggedUser?.userName}")
+                binding.deleteButton.visibility = View.VISIBLE
+                binding.deleteButton.setOnClickListener {
+                    Log.d("TAG", "Delete button clicked")
+                    post?.let {
+                        Model.shared.deletePost(it) {
+                            Log.d("TAG", "Deleted post successfully")
+                        }
+                    }
+                }
+            } else {
+                binding.deleteButton.visibility = View.GONE
+            }
+        }
         this.post = post
         binding.senderTextView?.text = post?.sender
         binding.contentTextView?.text = post?.content

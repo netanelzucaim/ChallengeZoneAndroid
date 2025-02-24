@@ -171,6 +171,11 @@ class FirebaseModel {
                         if (user != null) {
                             auth.signInWithEmailAndPassword(user.email, password)
                                 .addOnCompleteListener { authTask ->
+                                    val profile =
+                                        UserProfileChangeRequest.Builder().setDisplayName(user.userName)
+                                            .build()
+                                    auth.getCurrentUser()?.updateProfile(profile)
+//                                    Model.shared.username = user.userName
                                     callback(authTask.isSuccessful)
                                 }
                         } else {
@@ -228,7 +233,7 @@ class FirebaseModel {
                              UserProfileChangeRequest.Builder().setDisplayName(newUser.userName)
                                 .build()
                         auth.getCurrentUser()?.updateProfile(profile)
-                        Model.shared.username = newUser.userName
+//                        Model.shared.username = newUser.userName
                         auth.signInWithEmailAndPassword(newUser.email, password)
                             .addOnCompleteListener(
                                 OnCompleteListener<AuthResult?> {
@@ -246,5 +251,4 @@ class FirebaseModel {
         val username: String? = auth.currentUser?.displayName
         return username
     }
-
 }

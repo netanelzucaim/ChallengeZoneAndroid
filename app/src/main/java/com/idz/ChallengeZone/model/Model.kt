@@ -29,7 +29,6 @@ class Model private constructor() {
 //    val students: LiveData<List<Student>> = database.studentDao().getAllStudent()
     val posts: LiveData<List<Post>> = database.postDao().getAllPosts()
     val users: LiveData<List<User>> = database.userDao().getAllUsers()
-    val userLagziel: LiveData<User> = database.userDao().getUserByUsername("lagziel")
 
     val loadingState: MutableLiveData<LoadingState> = MutableLiveData<LoadingState>()
 
@@ -227,6 +226,12 @@ class Model private constructor() {
 
     fun deletePost(post: Post, callback: EmptyCallback) {
         firebaseModel.deletePost(post, callback)
+        executor.execute {
+            database.postDao().delete(post)
+            mainHandler.post {
+                callback()
+            }
+        }
     }
 
     fun updatePost(post: Post, callback: EmptyCallback) {
