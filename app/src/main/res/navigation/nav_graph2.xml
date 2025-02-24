@@ -44,7 +44,12 @@
         android:id="@+id/newPostFragment"
         android:name="com.idz.ChallengeZone.NewPostFragment"
         android:label="new student"
-        tools:layout="@layout/fragment_add_student" />
+        tools:layout="@layout/fragment_new_post" >
+    <action
+        android:id="@+id/action_newPostFragment_to_postListFragment"
+        app:destination="@id/postListFragment" />
+    </fragment>
+
     <fragment
         android:id="@+id/editPostFragment"
         android:name="com.idz.ChallengeZone.EditPostFragment"

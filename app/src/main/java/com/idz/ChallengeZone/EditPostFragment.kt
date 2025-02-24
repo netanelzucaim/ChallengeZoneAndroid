@@ -1,7 +1,9 @@
 package com.idz.ChallengeZone//package com.idz.ChallengeZone
 
 import android.content.Intent
+import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -25,6 +27,7 @@ class EditPostFragment : Fragment() {
     private var cameraLauncher: ActivityResultLauncher<Void?>? = null
     private var didSetProfileImage = false
     var post: Post? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val args = EditPostFragmentArgs.fromBundle(requireArguments())
@@ -42,16 +45,14 @@ class EditPostFragment : Fragment() {
         cameraLauncher = registerForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap ->
             binding?.postPicImageView?.setImageBitmap(bitmap)
             didSetProfileImage = true
-
         }
-
+        binding?.takePhotoButton?.setOnClickListener {
+            cameraLauncher?.launch(null)
+        }
         setupView(binding?.root)
-
-
-
         return binding?.root
-
     }
+
     override fun onDestroy() {
         super.onDestroy()
         binding = null
@@ -59,29 +60,48 @@ class EditPostFragment : Fragment() {
     private fun onSaveClicked(view: View) {
         binding?.progressBar?.visibility = View.VISIBLE
         setPost()
+        if (didSetProfileImage) {
+            binding?.postPicImageView?.isDrawingCacheEnabled = true
+            binding?.postPicImageView?.buildDrawingCache()
+            val bitmap = (binding?.postPicImageView?.drawable as BitmapDrawable).bitmap
 
-        Model.shared.updatePost(post!!) {
-            binding?.progressBar?.visibility = View.GONE
+            Model.shared.updatePost(post!!, bitmap, Model.Storage.CLOUDINARY) {
+                binding?.progressBar?.visibility = View.GONE
+                val action = EditPostFragmentDirections.actionEditPostFragmentToPostListfragment()
+                binding?.root?.let {
+                    Navigation.findNavController(it).navigate(action)
+                }
+            }
+        } else {
+            Model.shared.updatePost(post!!, null, Model.Storage.CLOUDINARY) {
+                binding?.progressBar?.visibility = View.GONE
+                val action = EditPostFragmentDirections.actionEditPostFragmentToPostListfragment()
+                binding?.root?.let {
+                    Navigation.findNavController(it).navigate(action)
+                }
+            }
+        }
+    }
 
-        }
-        val action = EditPostFragmentDirections.actionEditPostFragmentToPostListfragment()
-        binding?.root?.let {
-            Navigation.findNavController(it).navigate(action)
-        }
-}
     private fun onCancelClicked(view: View) {
             val action = EditPostFragmentDirections.actionEditPostFragmentToPostListfragment()
             binding?.root?.let {
                 Navigation.findNavController(it).navigate(action)
             }
     }
-    private fun onDeleteClicked(view: View){
-        binding?.progressBar?.visibility = View.VISIBLE
-        Model.shared.deletePost(post!!) {
-            binding?.progressBar?.visibility = View.GONE
-            Navigation.findNavController(view).popBackStack()
-        }
-    }
+//
+//    private fun onDeleteClicked(view: View){
+//        binding?.progressBar?.visibility = View.VISIBLE
+//        Model.shared.deletePost(post!!) {
+//            binding?.progressBar?.visibility = View.GONE
+//        }
+//        Navigation.findNavController(view).popBackStack()
+//        val action = EditPostFragmentDirections.actionEditPostFragmentToPostListfragment()
+//        binding?.root?.let {
+//            Navigation.findNavController(it).navigate(action)
+//        }
+//    }
+
     private fun setupView(view: View?) {
         binding?.contentEditText?.setText(post?.content)
 //        binding?.idEditText?.setText(student?.id)
@@ -105,7 +125,5 @@ class EditPostFragment : Fragment() {
             content = binding?.contentEditText?.text.toString(),
             postPic = post?.postPic
         )
-
     }
-
 }

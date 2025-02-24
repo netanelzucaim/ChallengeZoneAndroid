@@ -88,11 +88,19 @@ private fun onSaveClicked(view: View) {
 
             Model.shared.addPost(post, bitmap, Model.Storage.CLOUDINARY) {
                 binding?.progressBar?.visibility = View.GONE
-                Navigation.findNavController(view).popBackStack()        }
+                val action = NewPostFragmentDirections.actionNewPostFragmentToPostListFragment()
+                binding?.root?.let {
+                    Navigation.findNavController(it).navigate(action)
+                }
+            }
         } else {
             Model.shared.addPost(post, null, Model.Storage.CLOUDINARY) {
                 binding?.progressBar?.visibility = View.GONE
-                Navigation.findNavController(view).popBackStack()        }
+                val action = NewPostFragmentDirections.actionNewPostFragmentToPostListFragment()
+                binding?.root?.let {
+                    Navigation.findNavController(it).navigate(action)
+                }
+            }
         }
     }
     }

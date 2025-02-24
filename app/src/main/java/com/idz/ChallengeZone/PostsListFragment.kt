@@ -85,6 +85,7 @@ override fun onResume() {
     super.onResume()
     getAllPosts()
 }
+
 override fun onDestroy() {
     super.onDestroy()
     binding = null

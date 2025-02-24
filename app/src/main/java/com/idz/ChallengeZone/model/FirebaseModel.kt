@@ -139,6 +139,10 @@ class FirebaseModel {
             }
     }
 
+    fun logOut() {
+        auth.signOut()
+    }
+
 
     fun uploadImage(image: Bitmap, name: String, callback: (String?) -> Unit) {
         val storageRef = storage.reference
