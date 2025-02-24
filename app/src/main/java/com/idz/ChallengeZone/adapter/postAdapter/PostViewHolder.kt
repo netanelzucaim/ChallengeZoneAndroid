@@ -9,6 +9,9 @@ import com.idz.ChallengeZone.model.Model
 import com.idz.ChallengeZone.model.Post
 import com.squareup.picasso.Picasso
 import android.view.View
+import androidx.navigation.Navigation
+import com.idz.ChallengeZone.PostsListFragmentDirections
+
 class PostViewHolder(
     private val binding: PostListRowBinding,
     listener: OnItemClickListenerPosts?
@@ -28,6 +31,7 @@ class PostViewHolder(
                 Log.d("TAG","post sender is  ${post?.sender}")
                 Log.d("TAG","logged user for deletion is  ${loggedUser?.userName}")
                 binding.deleteButton.visibility = View.VISIBLE
+                binding.editButton.visibility = View.VISIBLE
                 binding.deleteButton.setOnClickListener {
                     Log.d("TAG", "Delete button clicked")
                     post?.let {
@@ -36,17 +40,23 @@ class PostViewHolder(
                         }
                     }
                 }
+                binding.editButton.setOnClickListener {
+                    post?.let {
+                        val action = PostsListFragmentDirections.actionPostListFragmentToEditPostFragment(it)
+                        binding.root.let { view ->
+                            Navigation.findNavController(view).navigate(action)
+                        }
+                    }
+                }
             } else {
                 binding.deleteButton.visibility = View.GONE
+                binding.editButton.visibility = View.GONE
             }
         }
         this.post = post
         binding.senderTextView?.text = post?.sender
         binding.contentTextView?.text = post?.content
-        binding.dateTextView?.text = post?.lastUpdated?.let { java.text.SimpleDateFormat("dd/MM/yyyy HH:mm", java.util.Locale.getDefault()).format(java.util.Date(it)) }//            users?.forEach { user ->
-//                Log.d("TAG", "User: ${user.userName}")
-//            }
-//        }
+        binding.dateTextView?.text = post?.lastUpdated?.let { java.text.SimpleDateFormat("dd/MM/yyyy HH:mm", java.util.Locale.getDefault()).format(java.util.Date(it)) }
         post?.postPic?.let {
             if (it.isNotBlank()) {
                 Picasso.get()
@@ -58,25 +68,8 @@ class PostViewHolder(
         Model.shared.users.observeForever { users ->
             users?.forEach { user ->
                 Log.d("TAG", "User from dao is: ${user.json}")
-
             }
         }
-//        Model.shared.getOtherUser(post?.sender) { user ->
-//            user?.avatarUrl?.let { avatarUrl ->
-//                if (avatarUrl.isNotBlank()) {
-//                    Picasso.get()
-//                        .load(avatarUrl)
-//                        .placeholder(R.drawable.avatar)
-//                        .into(binding.avatarImageView)
-//                }
-//            }
-//        }
-        Model.shared.otherUser.observeForever { user ->
-                Log.d("TAG", "User from dao of lagziel is: ${user!!.json}")
-        }
-//        Model.shared.getLoggedUser().observeForever { user ->
-//            Log.d("TAG", "current user from dao is: ${user?.json}")
-//        }
         Model.shared.getOtherUser(post?.sender).observeForever { user ->
             Log.d("TAG", "User from dao avatarUrl is: ${user?.json}")
             user?.avatarUrl?.let { avatarUrl ->

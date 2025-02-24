@@ -32,9 +32,12 @@
         android:name="com.idz.ChallengeZone.PostsListFragment"
         android:label="posts list"
         tools:layout="@layout/fragment_posts_list">
-<!--        <action-->
-<!--            android:id="@+id/action_postListFragment_to_studentDetailsFragment"-->
-<!--            app:destination="@id/studentDetailsFragment" />-->
+<!--        <argument-->
+<!--            android:name="post"-->
+<!--            app:argType="com.idz.ChallengeZone.model.Post" />-->
+        <action
+            android:id="@+id/action_postListFragment_to_editPostFragment"
+            app:destination="@id/editPostFragment" />
     </fragment>
 
     <fragment
@@ -42,6 +45,18 @@
         android:name="com.idz.ChallengeZone.NewPostFragment"
         android:label="new student"
         tools:layout="@layout/fragment_add_student" />
+    <fragment
+        android:id="@+id/editPostFragment"
+        android:name="com.idz.ChallengeZone.EditPostFragment"
+        android:label="edit post"
+        tools:layout="@layout/fragment_edit_post">
+        <action
+            android:id="@+id/action_editPostFragment_to_postListfragment"
+            app:destination="@id/postListFragment" />
+    <argument
+        android:name="post"
+        app:argType="com.idz.ChallengeZone.model.Post" />
+    </fragment>
 
 <!--    <fragment-->
 <!--        android:id="@+id/studentDetailsFragment"-->

@@ -236,6 +236,12 @@ class Model private constructor() {
 
     fun updatePost(post: Post, callback: EmptyCallback) {
         firebaseModel.updatePost(post, callback)
+        executor.execute {
+            database.postDao().updatePost(post)
+            mainHandler.post {
+                callback()
+            }
+        }
     }
 
     private fun uploadImageToFirebase(
