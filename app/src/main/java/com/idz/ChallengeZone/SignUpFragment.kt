@@ -16,6 +16,7 @@ import com.idz.ChallengeZone.databinding.FragmentSignUpBinding
 import com.idz.ChallengeZone.model.EmptyCallback
 import com.idz.ChallengeZone.model.Model
 import com.idz.ChallengeZone.model.User
+import java.util.UUID
 import java.util.regex.Pattern
 public typealias EmptyCallback = () -> Unit
 
@@ -58,10 +59,11 @@ class SignUpFragment : Fragment() {
         }
     }
     private fun signUpFunction() {
+        val id  = UUID.randomUUID().toString()
         val username = binding?.usernameInput?.text.toString()
         val password = binding?.passwordInput?.text.toString()
         val email = binding?.emailInput?.text.toString()
-        val newUser = User(username, password, "", email)
+        val newUser = User(id ,username, password, "", email)
 
         if (validateInput()) {
             binding?.progressBar?.visibility = View.VISIBLE

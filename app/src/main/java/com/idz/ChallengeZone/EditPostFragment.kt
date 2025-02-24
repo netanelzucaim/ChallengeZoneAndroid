@@ -41,7 +41,7 @@ class EditPostFragment : Fragment() {
         binding = FragmentEditPostBinding.inflate(inflater, container, false)
         binding?.cancelButton?.setOnClickListener(::onCancelClicked)
         binding?.saveButton?.setOnClickListener(::onSaveClicked)
-        binding?.deleteButton?.setOnClickListener(::onDeleteClicked)
+//        binding?.deleteButton?.setOnClickListener(::onDeleteClicked)
         cameraLauncher = registerForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap ->
             binding?.postPicImageView?.setImageBitmap(bitmap)
             didSetProfileImage = true

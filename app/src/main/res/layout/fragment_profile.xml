@@ -62,7 +62,7 @@
 
 
     <ImageView
-        android:id="@+id/imageView2"
+        android:id="@+id/avatarImageView"
         android:layout_width="70dp"
         android:layout_height="73dp"
         app:layout_constraintStart_toStartOf="parent"
@@ -70,21 +70,31 @@
         tools:src="@tools:sample/avatars" />
 
     <EditText
-        android:id="@+id/editTextText"
+        android:id="@+id/userNameEditText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="text"
         android:text="Name"
-        tools:layout_editor_absoluteX="90dp"
+        app:layout_constraintEnd_toStartOf="@+id/saveButton"
         tools:layout_editor_absoluteY="20dp" />
 
+    <ImageButton
+        android:id="@+id/takePhotoButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleType="fitCenter"
+        android:src="@drawable/add_photo"
+        app:layout_constraintBottom_toTopOf="@+id/swipeToRefresh"
+        app:layout_constraintEnd_toStartOf="@+id/userNameEditText"
+        app:layout_constraintStart_toEndOf="@+id/avatarImageView"
+        app:layout_constraintTop_toTopOf="parent" />
     <Button
-        android:id="@+id/button"
+        android:id="@+id/saveButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Button"
-        tools:layout_editor_absoluteX="313dp"
+        app:layout_constraintEnd_toEndOf="parent"
         tools:layout_editor_absoluteY="19dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

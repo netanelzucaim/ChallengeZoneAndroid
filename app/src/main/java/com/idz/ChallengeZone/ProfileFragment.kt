@@ -1,104 +1,173 @@
-//package com.idz.ChallengeZone
-//
-//import  android.os.Bundle
-//import android.util.Log
-//import androidx.fragment.app.Fragment
-//import android.view.LayoutInflater
-//import android.view.View
-//import android.view.ViewGroup
-//import androidx.recyclerview.widget.LinearLayoutManager
-//import com.idz.ChallengeZone.adapter.postAdapter.PostsRecyclerAdapter
-//import com.idz.ChallengeZone.model.Model
-//import com.idz.ChallengeZone.model.Post
-//import com.idz.ChallengeZone.databinding.FragmentPostsListBinding
-//import androidx.fragment.app.viewModels
+package com.idz.ChallengeZone
+
+import android.graphics.drawable.BitmapDrawable
+import  android.os.Bundle
+import android.util.Log
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.idz.ChallengeZone.adapter.postAdapter.PostsRecyclerAdapter
+import com.idz.ChallengeZone.model.Model
+import com.idz.ChallengeZone.model.Post
+import androidx.fragment.app.viewModels
+import androidx.navigation.Navigation
+import com.idz.ChallengeZone.databinding.FragmentProfileBinding
+import com.idz.ChallengeZone.model.User
+import com.squareup.picasso.Picasso
 //
 //interface OnItemClickListenerPosts {
 //    fun onItemClick(position: Int)
 //    fun onItemClick(post: Post?)
 //}
+
+class ProfileFragment : Fragment() {
+
+    private val viewModel: PostsListViewModel by viewModels()
+    private var adapter: PostsRecyclerAdapter? = null
+    private var binding: FragmentProfileBinding? = null
+    private var cameraLauncher: ActivityResultLauncher<Void?>? = null
+    private var didSetProfileImage = false
+    var user: User? = null
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+
+        binding = FragmentProfileBinding.inflate(inflater, container, false)
+        binding?.saveButton?.setOnClickListener(::onSaveClicked)
+        cameraLauncher = registerForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap ->
+            binding?.avatarImageView?.setImageBitmap(bitmap)
+            didSetProfileImage = true
+        }
+        binding?.takePhotoButton?.setOnClickListener {
+            cameraLauncher?.launch(null)
+        }
+        // Inflate the layout for this fragment
+        val view = inflater.inflate(R.layout.fragment_posts_list, container, false)
+
+        binding?.recyclerView?.setHasFixedSize(true)
+        setupView(view)
+        val layoutManager = LinearLayoutManager(context)
+
+        binding?.recyclerView?.layoutManager = layoutManager
+
+        adapter = PostsRecyclerAdapter(viewModel.posts.value)
+        viewModel.posts.observe(viewLifecycleOwner) {
+            adapter?.update(it)
+            adapter?.notifyDataSetChanged()
+            binding?.progressBar?.visibility = View.GONE
+        }
+        binding?.swipeToRefresh?.setOnRefreshListener(viewModel::refreshAllPosts)
+        Model.shared.loadingState.observe(viewLifecycleOwner) { state ->
+            binding?.swipeToRefresh?.isRefreshing = state == Model.LoadingState.LOADING
+        }
+
+        adapter?.listener = object : OnItemClickListenerPosts{
+            override fun onItemClick(position: Int) {
+                Log.d("TAG", "On click Activity listener on position $position")
+            }
+
+            override fun onItemClick(post: Post?) {
+                post?.let {
+                }
+            }
+        }
+
+        binding?.recyclerView?.adapter = adapter
+
+        return binding?.root
+    }
+
+    private fun onSaveClicked(view: View) {
+        binding?.progressBar?.visibility = View.VISIBLE
+        setUser()
+        if (didSetProfileImage) {
+            binding?.avatarImageView?.isDrawingCacheEnabled = true
+            binding?.avatarImageView?.buildDrawingCache()
+            val bitmap = (binding?.avatarImageView?.drawable as BitmapDrawable).bitmap
+
+            Model.shared.updateUser(user!!, bitmap, Model.Storage.CLOUDINARY) {
+                binding?.progressBar?.visibility = View.GONE
+            }
+        } else {
+            Model.shared.updateUser(user!!, null, Model.Storage.CLOUDINARY) {
+                binding?.progressBar?.visibility = View.GONE
+            }
+        }
+    }
+
+
+    private fun setupView(view: View?) {
+        Model.shared.getLoggedUser().observeForever { loggedUser ->
+            user = loggedUser
+            Log.d("TAG", "User from dao avatarUrl is: ${user?.json}")
+            user?.userName?.let { userName ->
+                binding?.userNameEditText?.setText(userName)
+            }
+            user?.avatarUrl?.let { avatarUrl ->
+                if (avatarUrl.isNotBlank()) {
+                    Picasso.get()
+                        .load(avatarUrl)
+                        .placeholder(R.drawable.avatar)
+                        .into(binding?.avatarImageView)
+                }
+            }
+        }
+    }
+
+//    private fun onSaveClicked(view: View) {
+//        binding?.progressBar?.visibility = View.VISIBLE
+//        setPost()
+//        if (didSetProfileImage) {
+//            binding?.postPicImageView?.isDrawingCacheEnabled = true
+//            binding?.postPicImageView?.buildDrawingCache()
+//            val bitmap = (binding?.postPicImageView?.drawable as BitmapDrawable).bitmap
 //
-//class PostsListFragment : Fragment() {
-//
-//    private val viewModel: PostsListViewModel by viewModels()
-//    private var adapter: PostsRecyclerAdapter? = null
-//    private var binding: FragmentPostsListBinding? = null
-//
-//
-//    override fun onCreateView(
-//        inflater: LayoutInflater, container: ViewGroup?,
-//        savedInstanceState: Bundle?
-//    ): View? {
-//        binding = FragmentPostsListBinding.inflate(inflater, container, false)
-////        viewModel = ViewModelProvider(this)[PostsListViewModel::class.java]
-//
-//        // Inflate the layout for this fragment
-//        val view = inflater.inflate(R.layout.fragment_posts_list, container, false)
-//
-//        binding?.recyclerView?.setHasFixedSize(true)
-//
-//        val layoutManager = LinearLayoutManager(context)
-//
-//        binding?.recyclerView?.layoutManager = layoutManager
-//
-////        adapter = PostsRecyclerAdapter(viewModel?.posts)
-//        adapter = PostsRecyclerAdapter(viewModel.posts.value)
-//        viewModel.posts.observe(viewLifecycleOwner) {
-//            adapter?.update(it)
-//            adapter?.notifyDataSetChanged()
-//            binding?.progressBar?.visibility = View.GONE
-//        }
-//        binding?.swipeToRefresh?.setOnRefreshListener(viewModel::refreshAllPosts)
-//        Model.shared.loadingState.observe(viewLifecycleOwner) { state ->
-//            binding?.swipeToRefresh?.isRefreshing = state == Model.LoadingState.LOADING
-//        }
-//
-//        adapter?.listener = object : OnItemClickListenerPosts{
-//            override fun onItemClick(position: Int) {
-//                Log.d("TAG", "On click Activity listener on position $position")
+//            Model.shared.updatePost(post!!, bitmap, Model.Storage.CLOUDINARY) {
+//                binding?.progressBar?.visibility = View.GONE
+//                val action = EditPostFragmentDirections.actionEditPostFragmentToPostListfragment()
+//                binding?.root?.let {
+//                    Navigation.findNavController(it).navigate(action)
+//                }
 //            }
-//
-//            override fun onItemClick(post: Post?) {
-////
-////                val action = PostsListFragmentDirections.actionPostsListFragmentToPostDetailsFragment(post!!)
-////                Navigation.findNavController(view).navigate(action)
-//
-//
-//                post?.let {
-////                    val action = PostsListFragmentDirections.actionPostsListFragmentToPostDetailsFragment(it)
-////                    binding?.root?.let {
-////                        Navigation.findNavController(it).navigate(action)
-////                    }
+//        } else {
+//            Model.shared.updatePost(post!!, null, Model.Storage.CLOUDINARY) {
+//                binding?.progressBar?.visibility = View.GONE
+//                val action = EditPostFragmentDirections.actionEditPostFragmentToPostListfragment()
+//                binding?.root?.let {
+//                    Navigation.findNavController(it).navigate(action)
 //                }
 //            }
 //        }
-////        recyclerView.adapter = adapter
-//        binding?.recyclerView?.adapter = adapter
-//
-////        val action = PostsListFragmentDirections.actionGlobalAddPostFragment()
-////        binding?.addPostButton?.setOnClickListener(Navigation.createNavigateOnClickListener(action))
-//        return binding?.root
 //    }
-//
-//
-//override fun onResume() {
-//    super.onResume()
-//    getAllPosts()
-//}
-//
-//override fun onDestroy() {
-//    super.onDestroy()
-//    binding = null
-//}
-//private fun getAllPosts() {
-//    binding?.progressBar?.visibility = View.VISIBLE
-////    Model.shared.getAllPosts {
-////        viewModel?.updatePosts(it)
-////        adapter?.set(it)
-////        adapter?.notifyDataSetChanged()
-////
-////        binding?.progressBar?.visibility = View.GONE
-////    }
-//    viewModel.refreshAllPosts()
-//}
-//}
+
+override fun onResume() {
+    super.onResume()
+    getAllPosts()
+}
+
+override fun onDestroy() {
+    super.onDestroy()
+    binding = null
+}
+private fun getAllPosts() {
+    binding?.progressBar?.visibility = View.VISIBLE
+    viewModel.refreshAllPosts()
+}
+
+    private fun setUser() {
+        user = user?.copy(
+            id = user?.id ?: "",
+            userName = binding?.userNameEditText?.text.toString(),
+            password = user?.password ?: "",
+            avatarUrl = user?.avatarUrl ?: "",
+            email = user?.email ?: ""
+        )
+    }
+
+}

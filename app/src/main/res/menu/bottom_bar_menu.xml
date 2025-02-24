@@ -11,6 +11,7 @@
         android:icon="@android:drawable/ic_input_add"
         android:title="add" />
     <item
+        android:id="@+id/profileFragment"
         android:icon="@drawable/avatar"
         android:title="profile" />
 </menu>

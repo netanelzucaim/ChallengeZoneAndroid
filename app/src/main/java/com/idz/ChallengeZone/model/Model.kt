@@ -147,6 +147,27 @@ class Model private constructor() {
             } ?: callback()
         }
     }
+
+    fun updateUser(user: User, image: Bitmap?,storage: Storage, callback: EmptyCallback) {
+        firebaseModel.updateUser(user) {
+            image?.let {
+                uploadTo(
+                    storage,
+                    image = image,
+                    name = user.id,
+                    callback = { uri ->
+                        if (!uri.isNullOrBlank()) {
+                            val us = user.copy(avatarUrl = uri)
+                            firebaseModel.updateUser(us, callback)
+                        } else {
+                            callback()
+                        }
+                    },
+                )
+            } ?: callback()
+        }
+    }
+
     fun addPost(post: Post, image: Bitmap?, storage: Storage, callback: EmptyCallback) {
         firebaseModel.addPost(post) {
             image?.let {

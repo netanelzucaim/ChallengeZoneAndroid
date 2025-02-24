@@ -8,10 +8,12 @@ import androidx.room.PrimaryKey
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import com.idz.ChallengeZone.base.MyApplication
+import com.idz.ChallengeZone.model.Post.Companion
 
 @Entity
 data class User(
-    @PrimaryKey val userName: String,
+    @PrimaryKey val id: String,
+    val userName: String,
     val password: String,
     var avatarUrl: String,
     var email: String,
@@ -24,10 +26,12 @@ data class User(
         parcel.readString() ?: "",
         parcel.readString() ?: "",
         parcel.readString() ?: "",
+        parcel.readString() ?: "",
         parcel.readLong()
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(id)
         parcel.writeString(userName)
         parcel.writeString(password)
         parcel.writeString(avatarUrl)
@@ -51,6 +55,7 @@ data class User(
                         edit().putLong(LOCAL_LAST_UPDATED_KEY, value).apply()
                     }
             }
+        const val ID_KEY = "id"
         const val USER_NAME_KEY = "userName"
         const val PASSWORD_KEY = "password"
         const val AVATAR_URL_KEY = "avatarUrl"
@@ -59,6 +64,7 @@ data class User(
         const val LOCAL_LAST_UPDATED_KEY = "localUserLastUpdated"
         // Create a Student instance from a Map
         fun fromJSON(json: Map<String, Any>): User {
+            val id = json[Post.ID_KEY] as? String ?: ""
             val userName = json[USER_NAME_KEY] as? String ?: ""
             val password = json[PASSWORD_KEY] as? String ?: ""
             val avatarUrl = json[AVATAR_URL_KEY] as? String ?: ""
@@ -67,6 +73,7 @@ data class User(
             val longTimestamp = timestamp?.toDate()?.time
             // Creating the User object
             return User(
+                id = id,
                 userName = userName,
                 password = password,
                 avatarUrl = avatarUrl,  // You may want to change how avatarUrl is used
@@ -91,6 +98,7 @@ data class User(
     // Convert the User object to a Map
     val json: Map<String, Any>
         get() = hashMapOf(
+            ID_KEY to id,
             USER_NAME_KEY to userName,
             PASSWORD_KEY to password,
             AVATAR_URL_KEY to avatarUrl,

@@ -13,6 +13,9 @@ interface PostDao {
     @Query("SELECT * FROM Post")
 //    fun getAllPosts(): List<Post>
     fun getAllPosts(): LiveData<List<Post>>
+    @Query("SELECT * FROM Post WHERE sender =:sender")
+//    fun getAllPosts(): List<Post>
+    fun getAllPostsBySender(sender: String): LiveData<List<Post>>
     @Query("SELECT * FROM Post WHERE id =:id")
     fun getPostById(id: String): Post
     @Insert(onConflict = OnConflictStrategy.REPLACE)

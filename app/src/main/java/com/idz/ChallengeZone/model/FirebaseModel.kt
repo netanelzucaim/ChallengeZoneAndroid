@@ -103,7 +103,7 @@ class FirebaseModel {
 //            }
 //    }
     fun addUser(user: User, callback: EmptyCallback) {
-        database.collection(Constants.Collections.USERS).document(user.userName).set(user.json)
+        database.collection(Constants.Collections.USERS).document(user.id).set(user.json)
             .addOnCompleteListener {
                 callback()
             }
@@ -139,6 +139,13 @@ class FirebaseModel {
             }
     }
 
+    fun updateUser(user: User, callback: EmptyCallback) {
+        database.collection(Constants.Collections.USERS).document(user.id).set(user.json)
+            .addOnCompleteListener {
+                callback()
+            }
+    }
+
     fun logOut() {
         auth.signOut()
     }
@@ -164,12 +171,13 @@ class FirebaseModel {
 
 
     fun logIn(username: String, password: String, callback: (Boolean?) -> Unit) {
-        database.collection(Constants.Collections.USERS).document(username)
+        database.collection(Constants.Collections.USERS).whereEqualTo("userName", username)
             .get()
             .addOnCompleteListener { task ->
                 val result = task.result
-                if (task.isSuccessful && result != null) {
-                    val data = result.data
+                if (task.isSuccessful && result != null && !result.isEmpty) {
+                    val document = result.documents[0]
+                    val data = document.data
                     if (data != null) {
                         val user = User.fromJSON(data)
                         if (user != null) {
@@ -229,7 +237,7 @@ class FirebaseModel {
 
     fun signUp(newUser: User, password: String, callback: EmptyCallback) {
 
-        database.collection(Constants.Collections.USERS).document(newUser.userName).set(newUser.json)
+        database.collection(Constants.Collections.USERS).document(newUser.id).set(newUser.json)
             .addOnCompleteListener(OnCompleteListener<Void?> {
                 auth.createUserWithEmailAndPassword(newUser.email, password)
                     .addOnCompleteListener(OnCompleteListener<AuthResult?> {

@@ -12,4 +12,8 @@ class PostsListViewModel : ViewModel() {
     fun refreshAllPosts() {
         Model.shared.refreshAllPosts()
     }
+    var postsOfLoggedUser: LiveData<List<Post>> = Model.shared.posts
+    fun refreshAllPostsOfLoggedUser() {
+        Model.shared.refreshAllPosts()
+    }
 }

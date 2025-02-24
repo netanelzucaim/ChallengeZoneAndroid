@@ -7,7 +7,7 @@ import com.idz.ChallengeZone.model.Post
 import com.idz.ChallengeZone.model.User
 
 //@Database(entities = [Student::class], version = 1)
-@Database(entities = [Post::class, User::class], version = 7)
+@Database(entities = [Post::class, User::class], version = 8)
 
 abstract class AppLocalDbRepository: RoomDatabase() {
     abstract fun postDao(): PostDao
