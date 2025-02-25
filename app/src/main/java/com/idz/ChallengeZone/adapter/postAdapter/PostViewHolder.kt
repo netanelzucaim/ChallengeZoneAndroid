@@ -27,7 +27,7 @@ class PostViewHolder(
 
     fun bind(post: Post?, position: Int) {
         Model.shared.getLoggedUser().observeForever { loggedUser ->
-            if (post?.sender == loggedUser?.userName) {
+            if (post?.sender == loggedUser?.id) {
                 Log.d("TAG","post sender is  ${post?.sender}")
                 Log.d("TAG","logged user for deletion is  ${loggedUser?.userName}")
                 binding.deleteButton.visibility = View.VISIBLE
@@ -54,17 +54,9 @@ class PostViewHolder(
             }
         }
         this.post = post
-        binding.senderTextView?.text = post?.sender
         binding.contentTextView?.text = post?.content
         binding.dateTextView?.text = post?.lastUpdated?.let { java.text.SimpleDateFormat("dd/MM/yyyy HH:mm", java.util.Locale.getDefault()).format(java.util.Date(it)) }
-        post?.postPic?.let {
-            if (it.isNotBlank()) {
-                Picasso.get()
-                    .load(it)
-                    .placeholder(R.drawable.avatar)
-                    .into(binding.postPicImageView)
-            }
-        }
+
         Model.shared.users.observeForever { users ->
             users?.forEach { user ->
                 Log.d("TAG", "User from dao is: ${user.json}")
@@ -72,6 +64,9 @@ class PostViewHolder(
         }
         Model.shared.getOtherUser(post?.sender).observeForever { user ->
             Log.d("TAG", "User from dao avatarUrl is: ${user?.json}")
+            user?.userName.let { username ->
+                binding.senderTextView?.text = username
+            }
             user?.avatarUrl?.let { avatarUrl ->
                 if (avatarUrl.isNotBlank()) {
                     Picasso.get()

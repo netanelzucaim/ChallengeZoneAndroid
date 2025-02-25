@@ -7,7 +7,7 @@ import com.idz.ChallengeZone.model.Post
 import com.idz.ChallengeZone.model.User
 
 //@Database(entities = [Student::class], version = 1)
-@Database(entities = [Post::class, User::class], version = 8)
+@Database(entities = [Post::class, User::class], version = 9)
 
 abstract class AppLocalDbRepository: RoomDatabase() {
     abstract fun postDao(): PostDao
@@ -15,7 +15,6 @@ abstract class AppLocalDbRepository: RoomDatabase() {
 }
 //class AppLocalDb {
 object AppLocalDb {
-
     val database: AppLocalDbRepository by lazy {
         val context = MyApplication.Globals.context ?: throw IllegalStateException("Application context is missing")
         Room.databaseBuilder(

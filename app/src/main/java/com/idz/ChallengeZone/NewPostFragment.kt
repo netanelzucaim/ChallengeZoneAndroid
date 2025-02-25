@@ -72,7 +72,7 @@ class NewPostFragment : Fragment() {
 private fun onSaveClicked(view: View) {
     var currentUser = ""
     Model.shared.getLoggedUser()?.observe(viewLifecycleOwner) { user ->
-        currentUser = user?.userName ?: ""
+        currentUser = user?.id ?: ""
         Log.d("TAG","current user after  observer is $currentUser")
         val post = Post(
             id  = UUID.randomUUID().toString(),
