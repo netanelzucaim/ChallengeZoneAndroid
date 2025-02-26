@@ -111,10 +111,10 @@ class ProfileFragment : Fragment() {
             }
             user?.avatarUrl?.let { avatarUrl ->
                 if (avatarUrl.isNotBlank()) {
-                    Picasso.get()
-                        .load(avatarUrl)
-                        .placeholder(R.drawable.avatar)
-                        .into(binding?.avatarImageView)
+//                    Picasso.get()
+//                        .load(avatarUrl)
+//                        .placeholder(R.drawable.avatar)
+//                        .into(binding?.avatarImageView)
                 }
             }
         }
