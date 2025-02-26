@@ -32,9 +32,6 @@
         android:name="com.idz.ChallengeZone.PostsListFragment"
         android:label="posts list"
         tools:layout="@layout/fragment_posts_list">
-<!--        <argument-->
-<!--            android:name="post"-->
-<!--            app:argType="com.idz.ChallengeZone.model.Post" />-->
         <action
             android:id="@+id/action_postListFragment_to_editPostFragment"
             app:destination="@id/editPostFragment" />

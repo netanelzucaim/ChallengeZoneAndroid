@@ -88,7 +88,6 @@ class NewPostFragment : Fragment() {
                 Model.shared.addPost(post, bitmap, Model.Storage.CLOUDINARY) {
                     binding?.progressBar?.visibility = View.GONE
                     val navController = Navigation.findNavController(view)
-                    navController.popBackStack(R.id.newPostFragment, true)
                     val action = NewPostFragmentDirections.actionNewPostFragmentToPostListFragment()
                     navController.navigate(action)
                 }
@@ -96,7 +95,6 @@ class NewPostFragment : Fragment() {
                 Model.shared.addPost(post, null, Model.Storage.CLOUDINARY) {
                     binding?.progressBar?.visibility = View.GONE
                     val navController = Navigation.findNavController(view)
-                    navController.popBackStack(R.id.newPostFragment, true)
                     val action = NewPostFragmentDirections.actionNewPostFragmentToPostListFragment()
                     navController.navigate(action)
                 }
