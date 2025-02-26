@@ -68,40 +68,39 @@ class NewPostFragment : Fragment() {
         super.onDestroy()
         binding = null
     }
+    private fun onSaveClicked(view: View) {
+        var currentUser = ""
+        Model.shared.getLoggedUser()?.observe(viewLifecycleOwner) { user ->
+            currentUser = user?.id ?: ""
+            Log.d("TAG", "current user after observer is $currentUser")
+            val post = Post(
+                id = UUID.randomUUID().toString(),
+                sender = currentUser,
+                content = binding?.contentEditText?.text?.toString() ?: "",
+                postPic = ""
+            )
+            binding?.progressBar?.visibility = View.VISIBLE
+            if (didSetProfileImage) {
+                binding?.postPicImageView?.isDrawingCacheEnabled = true
+                binding?.postPicImageView?.buildDrawingCache()
+                val bitmap = (binding?.postPicImageView?.drawable as BitmapDrawable).bitmap
 
-private fun onSaveClicked(view: View) {
-    var currentUser = ""
-    Model.shared.getLoggedUser()?.observe(viewLifecycleOwner) { user ->
-        currentUser = user?.id ?: ""
-        Log.d("TAG","current user after  observer is $currentUser")
-        val post = Post(
-            id  = UUID.randomUUID().toString(),
-            sender = currentUser,
-            content = binding?.contentEditText?.text?.toString() ?: "",
-            postPic = ""
-        )
-        binding?.progressBar?.visibility = View.VISIBLE
-        if (didSetProfileImage) {
-            binding?.postPicImageView?.isDrawingCacheEnabled = true
-            binding?.postPicImageView?.buildDrawingCache()
-            val bitmap = (binding?.postPicImageView?.drawable as BitmapDrawable).bitmap
-
-            Model.shared.addPost(post, bitmap, Model.Storage.CLOUDINARY) {
-                binding?.progressBar?.visibility = View.GONE
-//                val action = NewPostFragmentDirections.actionNewPostFragmentToPostListFragment()
-//                binding?.root?.let {
-//                    Navigation.findNavController(it).navigate(action)
-//                }
-            }
-        } else {
-            Model.shared.addPost(post, null, Model.Storage.CLOUDINARY) {
-                binding?.progressBar?.visibility = View.GONE
-//                val action = NewPostFragmentDirections.actionNewPostFragmentToPostListFragment()
-//                binding?.root?.let {
-//                    Navigation.findNavController(it).navigate(action)
-//                }
+                Model.shared.addPost(post, bitmap, Model.Storage.CLOUDINARY) {
+                    binding?.progressBar?.visibility = View.GONE
+                    val navController = Navigation.findNavController(view)
+                    navController.popBackStack(R.id.newPostFragment, true)
+                    val action = NewPostFragmentDirections.actionNewPostFragmentToPostListFragment()
+                    navController.navigate(action)
+                }
+            } else {
+                Model.shared.addPost(post, null, Model.Storage.CLOUDINARY) {
+                    binding?.progressBar?.visibility = View.GONE
+                    val navController = Navigation.findNavController(view)
+                    navController.popBackStack(R.id.newPostFragment, true)
+                    val action = NewPostFragmentDirections.actionNewPostFragmentToPostListFragment()
+                    navController.navigate(action)
+                }
             }
         }
-    }
     }
 }

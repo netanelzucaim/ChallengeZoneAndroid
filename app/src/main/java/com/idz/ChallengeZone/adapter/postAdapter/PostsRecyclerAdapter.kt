@@ -10,13 +10,10 @@ import com.idz.ChallengeZone.databinding.PostListRowBinding
 
 //class PostsRecyclerAdapter(private val posts: MutableList<Post>?): RecyclerView.Adapter<PostViewHolder>() {
 class PostsRecyclerAdapter(private var posts: List<Post>?): RecyclerView.Adapter<PostViewHolder>() {
-
-
         var listener: OnItemClickListenerPosts? = null
         fun update(posts: List<Post>?) {
             this.posts = posts
         }
-
 
     fun set(posts: List<Post>?) {
             this.posts = posts

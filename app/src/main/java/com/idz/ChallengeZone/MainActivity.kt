@@ -56,27 +56,27 @@ class MainActivity : AppCompatActivity() {
 
         // Show/hide menu items based on current fragment
 //        menu?.findItem(R.id.editStudentFragment)?.isVisible = currentFragment == R.id.studentDetailsFragment
-        menu?.findItem(R.id.newPostFragment)?.isVisible = currentFragment == R.id.postListFragment
+//        menu?.findItem(R.id.newPostFragment)?.isVisible = currentFragment == R.id.postListFragment
 
         return super.onPrepareOptionsMenu(menu)
     }
 
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            android.R.id.home -> {
-                navController?.popBackStack()
-                true
-            }
-            else -> {
-              // let the onOptionsItemSelected in editStudentFragment to handle it
-                if (item.itemId == R.id.editStudentFragment) {
-                    return false
-                } else {
-                    navController?.let { NavigationUI.onNavDestinationSelected(item, it) }
-                }
-                true
-            }
-        }
-    }
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+//        return when (item.itemId) {
+//            android.R.id.home -> {
+//                navController?.popBackStack()
+//                true
+//            }
+//            else -> {
+//                // let the onOptionsItemSelected in editStudentFragment to handle it
+////                if (item.itemId == R.id.editStudentFragment) {
+////                    return false
+////                } else {
+////                    navController?.let { NavigationUI.onNavDestinationSelected(item, it) }
+////                }
+//                true
+//            }
+//        }
+//    }
 }

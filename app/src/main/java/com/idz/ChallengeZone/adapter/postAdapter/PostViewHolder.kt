@@ -56,12 +56,34 @@ class PostViewHolder(
         this.post = post
         binding.contentTextView?.text = post?.content
         binding.dateTextView?.text = post?.lastUpdated?.let { java.text.SimpleDateFormat("dd/MM/yyyy HH:mm", java.util.Locale.getDefault()).format(java.util.Date(it)) }
+        post?.postPic?.let { avatarUrl ->
+            if (avatarUrl.isNotBlank()) {
+                Picasso.get()
+                    .load(avatarUrl)
+                    .placeholder(R.drawable.avatar)
+                    .into(object : com.squareup.picasso.Target {
+                        override fun onBitmapLoaded(bitmap: android.graphics.Bitmap?, from: Picasso.LoadedFrom?) {
+                            binding.postPicImageView.setImageBitmap(bitmap)
+                            binding.postPicImageView.visibility = View.VISIBLE
+                        }
 
+                        override fun onBitmapFailed(e: java.lang.Exception?, errorDrawable: android.graphics.drawable.Drawable?) {
+                            binding.postPicImageView.setImageDrawable(errorDrawable)
+                            binding.postPicImageView.visibility = View.VISIBLE
+                        }
+
+                        override fun onPrepareLoad(placeHolderDrawable: android.graphics.drawable.Drawable?) {
+                            binding.postPicImageView.setImageDrawable(placeHolderDrawable)
+                        }
+                    })
+            }
+        }
         Model.shared.users.observeForever { users ->
             users?.forEach { user ->
                 Log.d("TAG", "User from dao is: ${user.json}")
             }
         }
+
         Model.shared.getOtherUser(post?.sender).observeForever { user ->
             Log.d("TAG", "User from dao avatarUrl is: ${user?.json}")
             user?.userName.let { username ->
