@@ -57,15 +57,18 @@ class SignInFragment : Fragment() {
         binding?.continueButton?.setOnClickListener {
             val username = binding?.usernameInput?.text.toString()
             val password = binding?.passwordInput?.text.toString()
+            binding?.progressBar?.visibility = View.VISIBLE
 
             Model.shared.logIn(username, password) { isSuccessful ->
                 if (isSuccessful == true) {
+                    binding?.progressBar?.visibility = View.GONE
                     val action = SignInFragmentDirections.actionSignInFragmentToPostsListFragment()
                     binding?.root?.let {
                         Navigation.findNavController(it).navigate(action)
                     }
                 } else {
                     makeAToast("Username or password are not correct")
+                    binding?.progressBar?.visibility = View.GONE
                 }
             }
         }

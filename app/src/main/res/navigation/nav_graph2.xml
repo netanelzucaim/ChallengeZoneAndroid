@@ -87,6 +87,7 @@
         android:id="@+id/action_global_newPostFragment"
         app:destination="@id/newPostFragment" />
 
+
 <!--    <fragment-->
 <!--        android:id="@+id/editStudentFragment"-->
 <!--        android:name="com.idz.ChallengeZone.EditStudentFragment"-->
@@ -96,4 +97,13 @@
 <!--            android:name="student"-->
 <!--            app:argType="com.idz.ChallengeZone.model.Student" />-->
 <!--    </fragment>-->
+    <action
+        android:id="@+id/action_global_editPostFragment"
+        app:destination="@id/editPostFragment" />
+    <action
+        android:id="@+id/action_global_postListFragment"
+        app:destination="@id/postListFragment" />
+    <action
+        android:id="@+id/action_global_signInFragment"
+        app:destination="@id/signInFragment" />
 </navigation>

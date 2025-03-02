@@ -21,7 +21,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-<!--     Profile Picture-->
+    <!--     Profile Picture-->
     <ImageView
         android:id="@+id/ivProfilePicture"
         android:layout_width="40dp"

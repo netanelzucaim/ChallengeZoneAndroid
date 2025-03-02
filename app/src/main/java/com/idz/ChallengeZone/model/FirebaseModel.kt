@@ -58,6 +58,28 @@ class FirebaseModel {
 //                Log.d("TAG", it.toString() + it.message)
 //            })
     }
+    fun getAllPostsOfLoggedUser(sinceLastUpdated: Long, callback: PostsCallback) {
+        database.collection(Constants.Collections.POSTS)
+            .whereGreaterThanOrEqualTo(Post.LAST_UPDATED,sinceLastUpdated.toFirebaseTimestamp)
+            .get()
+            .addOnCompleteListener {
+                when (it.isSuccessful) {
+                    true -> {
+                        val posts: MutableList<Post> = mutableListOf()
+                        for (json in it.result) {
+                            Log.d("TAG","the number of posts are changed to ${json.data}")
+                            posts.add(Post.fromJSON(json.data))
+                        }
+                        Log.d("TAG", posts.size.toString())
+                        callback(posts)
+                    }
+                    false -> callback(listOf())
+                }
+            }
+//            .addOnFailureListener(OnFailureListener {
+//                Log.d("TAG", it.toString() + it.message)
+//            })
+    }
 
     fun getAllUsers(sinceLastUpdated: Long, callback: UsersCallback) {
         database.collection(Constants.Collections.USERS)

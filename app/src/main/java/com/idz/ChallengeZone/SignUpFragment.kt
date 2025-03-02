@@ -58,12 +58,13 @@ class SignUpFragment : Fragment() {
             signUpFunction()
         }
     }
+
     private fun signUpFunction() {
         val id  = UUID.randomUUID().toString()
         val username = binding?.usernameInput?.text.toString()
         val password = binding?.passwordInput?.text.toString()
         val email = binding?.emailInput?.text.toString()
-        val newUser = User(id ,username, password, "", email)
+        val newUser = User(id, username, password, "", email)
 
         if (validateInput()) {
             binding?.progressBar?.visibility = View.VISIBLE
@@ -84,10 +85,12 @@ class SignUpFragment : Fragment() {
 
                                 Model.shared.signUp(newUser, password, bitmap, Model.Storage.CLOUDINARY) {
                                     binding?.progressBar?.visibility = View.GONE
+                                    makeAToast("Successfully signed up", true)
                                 }
                             } else {
                                 Model.shared.signUp(newUser, password, null, Model.Storage.CLOUDINARY) {
                                     binding?.progressBar?.visibility = View.GONE
+                                    makeAToast("Successfully signed up", true)
                                 }
                             }
                         }
@@ -96,12 +99,21 @@ class SignUpFragment : Fragment() {
             }
         }
     }
+    private fun navigateToSignInFragment() {
+        val navController = Navigation.findNavController(requireView())
+        val action = SignUpFragmentDirections.actionGlobalSignInFragment()
+        navController.navigate(action)
+    }
 
-    fun makeAToast(text: String?) {
+    fun makeAToast(text: String?, navigate: Boolean = false) {
         AlertDialog.Builder(context)
-            .setTitle("Invalid Input")
+            .setTitle("Notification")
             .setMessage(text)
-            .setPositiveButton("Ok") { dialog: DialogInterface?, which: Int -> }
+            .setPositiveButton("Ok") { dialog: DialogInterface?, which: Int ->
+                if (navigate) {
+                    navigateToSignInFragment()
+                }
+            }
             .create().show()
     }
 

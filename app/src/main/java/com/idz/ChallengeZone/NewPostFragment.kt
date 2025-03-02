@@ -88,14 +88,17 @@ class NewPostFragment : Fragment() {
                 Model.shared.addPost(post, bitmap, Model.Storage.CLOUDINARY) {
                     binding?.progressBar?.visibility = View.GONE
                     val navController = Navigation.findNavController(view)
-                    val action = NewPostFragmentDirections.actionNewPostFragmentToPostListFragment()
+                    navController.popBackStack(R.id.newPostFragment, true)
+                    val action = NewPostFragmentDirections.actionGlobalPostListFragment()
                     navController.navigate(action)
+
                 }
             } else {
                 Model.shared.addPost(post, null, Model.Storage.CLOUDINARY) {
                     binding?.progressBar?.visibility = View.GONE
                     val navController = Navigation.findNavController(view)
-                    val action = NewPostFragmentDirections.actionNewPostFragmentToPostListFragment()
+                    navController.popBackStack(R.id.newPostFragment, true)
+                    val action = NewPostFragmentDirections.actionGlobalPostListFragment()
                     navController.navigate(action)
                 }
             }

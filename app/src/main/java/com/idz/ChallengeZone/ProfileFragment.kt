@@ -40,6 +40,7 @@ class ProfileFragment : Fragment() {
 
         binding = FragmentProfileBinding.inflate(inflater, container, false)
         binding?.saveButton?.setOnClickListener(::onSaveClicked)
+        binding?.logoutButton?.setOnClickListener(::onLogoutClicked)
         cameraLauncher = registerForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap ->
             binding?.avatarImageView?.setImageBitmap(bitmap)
             didSetProfileImage = true
@@ -56,8 +57,8 @@ class ProfileFragment : Fragment() {
 
         binding?.recyclerView?.layoutManager = layoutManager
 
-        adapter = PostsRecyclerAdapter(viewModel.posts.value)
-        viewModel.posts.observe(viewLifecycleOwner) {
+        adapter = PostsRecyclerAdapter(viewModel.postsOfLoggedUser.value)
+        viewModel.postsOfLoggedUser.observe(viewLifecycleOwner) {
             adapter?.update(it)
             adapter?.notifyDataSetChanged()
             binding?.progressBar?.visibility = View.GONE
@@ -145,7 +146,12 @@ class ProfileFragment : Fragment() {
 //            }
 //        }
 //    }
-
+private fun onLogoutClicked(view: View) {
+    Model.shared.logOut()
+    val navController = Navigation.findNavController(view)
+    val action = ProfileFragmentDirections.actionGlobalSignInFragment()
+    navController.navigate(action)
+}
 override fun onResume() {
     super.onResume()
     getAllPosts()

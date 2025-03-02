@@ -57,6 +57,7 @@ class EditPostFragment : Fragment() {
         super.onDestroy()
         binding = null
     }
+
     private fun onSaveClicked(view: View) {
         binding?.progressBar?.visibility = View.VISIBLE
         setPost()
@@ -67,27 +68,25 @@ class EditPostFragment : Fragment() {
 
             Model.shared.updatePost(post!!, bitmap, Model.Storage.CLOUDINARY) {
                 binding?.progressBar?.visibility = View.GONE
-                val action = EditPostFragmentDirections.actionEditPostFragmentToPostListfragment()
-                binding?.root?.let {
-                    Navigation.findNavController(it).navigate(action)
-                }
+                navigateToPostList(view)
             }
         } else {
             Model.shared.updatePost(post!!, null, Model.Storage.CLOUDINARY) {
                 binding?.progressBar?.visibility = View.GONE
-                val action = EditPostFragmentDirections.actionEditPostFragmentToPostListfragment()
-                binding?.root?.let {
-                    Navigation.findNavController(it).navigate(action)
-                }
+                navigateToPostList(view)
             }
         }
     }
 
+    private fun navigateToPostList(view: View) {
+        val navController = Navigation.findNavController(view)
+        navController.popBackStack(R.id.editPostFragment, true)
+        val action = EditPostFragmentDirections.actionGlobalPostListFragment()
+        navController.navigate(action)
+    }
+
     private fun onCancelClicked(view: View) {
-            val action = EditPostFragmentDirections.actionEditPostFragmentToPostListfragment()
-            binding?.root?.let {
-                Navigation.findNavController(it).navigate(action)
-            }
+        navigateToPostList(view)
     }
 //
 //    private fun onDeleteClicked(view: View){

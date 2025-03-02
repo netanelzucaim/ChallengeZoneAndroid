@@ -28,6 +28,7 @@ class Model private constructor() {
     private var mainHandler = HandlerCompat.createAsync(Looper.getMainLooper())
 //    val students: LiveData<List<Student>> = database.studentDao().getAllStudent()
     val posts: LiveData<List<Post>> = database.postDao().getAllPosts()
+
     val users: LiveData<List<User>> = database.userDao().getAllUsers()
 
     val loadingState: MutableLiveData<LoadingState> = MutableLiveData<LoadingState>()
@@ -111,6 +112,27 @@ class Model private constructor() {
         loadingState.postValue(LoadingState.LOADING)
         var lastUpdated: Long = Post.lastUpdated
         firebaseModel.getAllPosts(lastUpdated) { list ->
+            executor.execute {
+                var currentTime = lastUpdated
+                for (post in list) {
+                    database.postDao().insertPosts(post)
+                    post.lastUpdated?.let {
+                        if (currentTime < it) {
+                            currentTime = it
+                        }
+                    }
+                }
+                Post.lastUpdated = currentTime
+                loadingState.postValue(LoadingState.LOADED)
+            }
+        }
+    }
+    fun refreshAllPostsOfLoggedUser() {
+
+        Log.d("TAG", "refreshAllPosts")
+        loadingState.postValue(LoadingState.LOADING)
+        var lastUpdated: Long = Post.lastUpdated
+        firebaseModel.getAllPostsOfLoggedUser(lastUpdated) { list ->
             executor.execute {
                 var currentTime = lastUpdated
                 for (post in list) {
@@ -300,31 +322,21 @@ class Model private constructor() {
         )
     }
 
-//    private var user: MutableLiveData<User?> = MutableLiveData()
-//    var username: String? = null
-//    fun getLoggedUser(): LiveData<User?> {
-//        val username: String? = firebaseModel.getLoggedUserUsername()
-//        if (username != null) {
-//            this.username = username
-//            Log.d("TAG", "loggedUser is $username")
-//
-//        }
-//        if (user.value == null) {
-//            this.username?.let {
-//                user.postValue(database.userDao().getUserByUsername(it).value)
-//                refreshAllUsers()
-//            }
-//        }
-//        return user
-//    }
 
+    var id: String? = ""
+    val postsOfLoggedUser: MutableLiveData<List<Post>> = MutableLiveData()
 
-    var id: String? = null
     fun getLoggedUser(): LiveData<User?> {
         Log.d("TAG", "loggedUser")
         val id: String? = firebaseModel.getLoggedUserId()
         if (id != null) {
             this.id = id
+            Log.d("TAG", "loggedUser id is $id")
+
+            val userPosts = database.postDao().getAllPostsBySender(this.id!!)
+            userPosts.observeForever { posts ->
+                postsOfLoggedUser.postValue(posts)
+            }
         }
         val result = MutableLiveData<User?>()
         id?.let {

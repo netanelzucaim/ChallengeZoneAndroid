@@ -9,11 +9,8 @@ import com.idz.ChallengeZone.model.Model
 
 class PostsListViewModel : ViewModel() {
     var posts: LiveData<List<Post>> = Model.shared.posts
+    var postsOfLoggedUser: LiveData<List<Post>> = Model.shared.postsOfLoggedUser
     fun refreshAllPosts() {
-        Model.shared.refreshAllPosts()
-    }
-    var postsOfLoggedUser: LiveData<List<Post>> = Model.shared.posts
-    fun refreshAllPostsOfLoggedUser() {
         Model.shared.refreshAllPosts()
     }
 }

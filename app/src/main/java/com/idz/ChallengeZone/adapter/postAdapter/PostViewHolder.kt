@@ -10,6 +10,7 @@ import com.idz.ChallengeZone.model.Post
 import com.squareup.picasso.Picasso
 import android.view.View
 import androidx.navigation.Navigation
+import com.idz.ChallengeZone.EditPostFragmentDirections
 import com.idz.ChallengeZone.PostsListFragmentDirections
 
 class PostViewHolder(
@@ -42,10 +43,11 @@ class PostViewHolder(
                 }
                 binding.editButton.setOnClickListener {
                     post?.let {
-                        val action = PostsListFragmentDirections.actionPostListFragmentToEditPostFragment(it)
-                        binding.root.let { view ->
-                            Navigation.findNavController(view).navigate(action)
-                        }
+//                        val action = PostsListFragmentDirections.actionGlobalEditPostFragment(it)
+//                        binding.root.let { view ->
+//                            Navigation.findNavController(view).navigate(action)
+//                        }
+                        navigateToEditPost(binding.root,it)
                     }
                 }
             } else {
@@ -99,4 +101,11 @@ class PostViewHolder(
             }
         }
     }
+}
+
+
+private fun navigateToEditPost(view: View, post: Post) {
+    val navController = Navigation.findNavController(view)
+    val action = PostsListFragmentDirections.actionGlobalEditPostFragment(post)
+    navController.navigate(action)
 }
