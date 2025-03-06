@@ -21,7 +21,7 @@ android {
         buildConfigField("String", "CLOUD_NAME", "\"${project.properties["CLOUD_NAME"] ?: ""}\"")
         buildConfigField("String", "API_KEY", "\"${project.properties["API_KEY"] ?: ""}\"")
         buildConfigField("String", "API_SECRET", "\"${project.properties["API_SECRET"] ?: ""}\"")
-
+        buildConfigField("", "GENERATIVE_API_KEY", "\"${project.properties["GENERATIVE_API_KEY"] ?: ""}\"")
     }
 
     buildTypes {
@@ -48,6 +48,7 @@ android {
 
 dependencies {
 
+    implementation("com.google.ai.client.generativeai:generativeai:0.9.0")
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui )
     implementation(libs.androidx.core.ktx)
@@ -68,6 +69,4 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     implementation("com.google.firebase:firebase-auth")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
-
-
 }

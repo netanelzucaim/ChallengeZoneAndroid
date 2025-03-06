@@ -14,4 +14,8 @@
         android:id="@+id/profileFragment"
         android:icon="@drawable/avatar"
         android:title="profile" />
+    <item
+        android:id="@+id/askAiFragment"
+        android:icon="@drawable/avatar"
+        android:title="askAi" />
 </menu>

@@ -52,7 +52,12 @@
         android:label="new student"
         tools:layout="@layout/fragment_profile">
     </fragment>
-
+    <fragment
+        android:id="@+id/askAiFragment"
+        android:name="com.idz.ChallengeZone.AskAiFragment"
+        android:label="ask ai"
+        tools:layout="@layout/fragment_ask_ai">
+    </fragment>
     <fragment
         android:id="@+id/editPostFragment"
         android:name="com.idz.ChallengeZone.EditPostFragment"
