@@ -10,21 +10,21 @@ import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
-import com.google.firebase.auth.FirebaseUser
 import com.idz.ChallengeZone.databinding.FragmentSignUpBinding
-import com.idz.ChallengeZone.model.EmptyCallback
 import com.idz.ChallengeZone.model.Model
 import com.idz.ChallengeZone.model.User
+import com.idz.ChallengeZone.viewmodel.AuthViewModel
 import java.util.UUID
 import java.util.regex.Pattern
-public typealias EmptyCallback = () -> Unit
 
 class SignUpFragment : Fragment() {
 
     private var binding: FragmentSignUpBinding? = null
     private var cameraLauncher: ActivityResultLauncher<Void?>? = null
     private var didSetProfileImage = false
+    private val authViewModel: AuthViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,6 +45,7 @@ class SignUpFragment : Fragment() {
         binding?.takePhotoButton?.setOnClickListener {
             cameraLauncher?.launch(null)
         }
+        observeViewModel()
         return binding?.root
     }
 
@@ -68,37 +69,52 @@ class SignUpFragment : Fragment() {
 
         if (validateInput()) {
             binding?.progressBar?.visibility = View.VISIBLE
-            Model.shared.isUserNameTaken(username) { isTaken ->
-                if (isTaken) {
-                    binding?.progressBar?.visibility = View.GONE
-                    makeAToast("Username already been taken")
-                } else {
-                    Model.shared.isEmailTaken(email) { isEmailTaken ->
-                        if (isEmailTaken) {
-                            binding?.progressBar?.visibility = View.GONE
-                            makeAToast("Email already been taken")
-                        } else {
-                            if (didSetProfileImage) {
-                                binding?.imageView?.isDrawingCacheEnabled = true
-                                binding?.imageView?.buildDrawingCache()
-                                val bitmap = (binding?.imageView?.drawable as BitmapDrawable).bitmap
+            authViewModel.checkUsernameTaken(username)
+        }
+    }
 
-                                Model.shared.signUp(newUser, password, bitmap, Model.Storage.CLOUDINARY) {
-                                    binding?.progressBar?.visibility = View.GONE
-                                    makeAToast("Successfully signed up", true)
-                                }
-                            } else {
-                                Model.shared.signUp(newUser, password, null, Model.Storage.CLOUDINARY) {
-                                    binding?.progressBar?.visibility = View.GONE
-                                    makeAToast("Successfully signed up", true)
-                                }
-                            }
-                        }
-                    }
+    private fun observeViewModel() {
+        authViewModel.isUsernameTaken.observe(viewLifecycleOwner) { isTaken ->
+            if (isTaken == true) {
+                binding?.progressBar?.visibility = View.GONE
+                makeAToast("Username already been taken")
+            } else {
+                val email = binding?.emailInput?.text.toString()
+                authViewModel.checkEmailTaken(email)
+            }
+        }
+
+        authViewModel.isEmailTaken.observe(viewLifecycleOwner) { isTaken ->
+            if (isTaken == true) {
+                binding?.progressBar?.visibility = View.GONE
+                makeAToast("Email already been taken")
+            } else {
+                val id  = UUID.randomUUID().toString()
+                val username = binding?.usernameInput?.text.toString()
+                val password = binding?.passwordInput?.text.toString()
+                val email = binding?.emailInput?.text.toString()
+                val newUser = User(id, username, password, "", email)
+
+                if (didSetProfileImage) {
+                    binding?.imageView?.isDrawingCacheEnabled = true
+                    binding?.imageView?.buildDrawingCache()
+                    val bitmap = (binding?.imageView?.drawable as BitmapDrawable).bitmap
+
+                    authViewModel.signUp(newUser, password, bitmap, Model.Storage.CLOUDINARY)
+                } else {
+                    authViewModel.signUp(newUser, password, null, Model.Storage.CLOUDINARY)
                 }
             }
         }
+
+        authViewModel.signUpResult.observe(viewLifecycleOwner) { isSuccessful ->
+            binding?.progressBar?.visibility = View.GONE
+            if (isSuccessful == true) {
+                makeAToast("Successfully signed up", true)
+            }
+        }
     }
+
     private fun navigateToSignInFragment() {
         val navController = Navigation.findNavController(requireView())
         val action = SignUpFragmentDirections.actionGlobalSignInFragment()
@@ -141,9 +157,6 @@ class SignUpFragment : Fragment() {
         val pattern = Pattern.compile(regex)
         val matcher = pattern.matcher(email)
         return matcher.matches()
-    }
-
-    private fun updateUI(user: FirebaseUser?) {
     }
 
     private fun reload() {

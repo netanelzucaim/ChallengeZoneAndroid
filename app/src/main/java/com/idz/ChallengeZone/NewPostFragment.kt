@@ -17,6 +17,8 @@ import com.idz.ChallengeZone.databinding.FragmentNewPostBinding
 import com.idz.ChallengeZone.model.Model
 import com.idz.ChallengeZone.model.Post
 import com.idz.ChallengeZone.model.User
+import com.idz.ChallengeZone.viewmodel.AuthViewModel
+import com.idz.ChallengeZone.viewmodel.PostViewModel
 import com.idz.ChallengeZone.viewmodel.UserViewModel
 import java.util.UUID
 
@@ -25,6 +27,8 @@ class NewPostFragment : Fragment() {
     private var cameraLauncher: ActivityResultLauncher<Void?>? = null
     private var didSetProfileImage = false
     private val userViewModel: UserViewModel by viewModels()
+    private val postViewModel: PostViewModel by viewModels()
+    private val authViewModel: AuthViewModel by viewModels()
     var user: User? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,7 +72,7 @@ class NewPostFragment : Fragment() {
 
     private fun onSaveClicked(view: View) {
         var currentUser = ""
-        Model.shared.getLoggedUser()?.observe(viewLifecycleOwner) { user ->
+        authViewModel.getLoggedUser()?.observe(viewLifecycleOwner) { user ->
             currentUser = user?.id ?: ""
             Log.d("TAG", "current user after observer is $currentUser")
             val post = Post(
@@ -83,7 +87,7 @@ class NewPostFragment : Fragment() {
                 binding?.postPicImageView?.buildDrawingCache()
                 val bitmap = (binding?.postPicImageView?.drawable as BitmapDrawable).bitmap
 
-                Model.shared.addPost(post, bitmap, Model.Storage.CLOUDINARY) {
+                postViewModel.addPost(post, bitmap, Model.Storage.CLOUDINARY) {
                     binding?.progressBar?.visibility = View.GONE
                     val navController = Navigation.findNavController(view)
                     navController.popBackStack(R.id.newPostFragment, true)
@@ -91,7 +95,7 @@ class NewPostFragment : Fragment() {
                     navController.navigate(action)
                 }
             } else {
-                Model.shared.addPost(post, null, Model.Storage.CLOUDINARY) {
+                postViewModel.addPost(post, null, Model.Storage.CLOUDINARY) {
                     binding?.progressBar?.visibility = View.GONE
                     val navController = Navigation.findNavController(view)
                     navController.popBackStack(R.id.newPostFragment, true)

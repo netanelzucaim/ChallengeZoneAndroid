@@ -5,12 +5,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.idz.ChallengeZone.OnItemClickListenerPosts
 import com.idz.ChallengeZone.R
 import com.idz.ChallengeZone.databinding.PostListRowBinding
-import com.idz.ChallengeZone.model.Model
 import com.idz.ChallengeZone.model.Post
 import com.squareup.picasso.Picasso
 import android.view.View
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
-import com.idz.ChallengeZone.EditPostFragmentDirections
+import com.idz.ChallengeZone.viewmodel.AuthViewModel
+import com.idz.ChallengeZone.viewmodel.PostViewModel
+import com.idz.ChallengeZone.viewmodel.UserViewModel
 import com.idz.ChallengeZone.PostsListFragmentDirections
 
 class PostViewHolder(
@@ -18,6 +21,9 @@ class PostViewHolder(
     listener: OnItemClickListenerPosts?
 ): RecyclerView.ViewHolder(binding.root) {
     private var post: Post? = null
+    private val postViewModel: PostViewModel = ViewModelProvider(itemView.context as FragmentActivity).get(PostViewModel::class.java)
+    private val authViewModel: AuthViewModel = ViewModelProvider(itemView.context as FragmentActivity).get(AuthViewModel::class.java)
+    private val userViewModel: UserViewModel = ViewModelProvider(itemView.context as FragmentActivity).get(UserViewModel::class.java)
 
     init {
         itemView.setOnClickListener {
@@ -27,7 +33,7 @@ class PostViewHolder(
     }
 
     fun bind(post: Post?, position: Int) {
-        Model.shared.getLoggedUser().observeForever { loggedUser ->
+        authViewModel.getLoggedUser().observeForever { loggedUser ->
             if (post?.sender == loggedUser?.id) {
                 Log.d("TAG","post sender is  ${post?.sender}")
                 Log.d("TAG","logged user for deletion is  ${loggedUser?.userName}")
@@ -36,18 +42,14 @@ class PostViewHolder(
                 binding.deleteButton.setOnClickListener {
                     Log.d("TAG", "Delete button clicked")
                     post?.let {
-                        Model.shared.deletePost(it) {
+                        postViewModel.deletePost(it) {
                             Log.d("TAG", "Deleted post successfully")
                         }
                     }
                 }
                 binding.editButton.setOnClickListener {
                     post?.let {
-//                        val action = PostsListFragmentDirections.actionGlobalEditPostFragment(it)
-//                        binding.root.let { view ->
-//                            Navigation.findNavController(view).navigate(action)
-//                        }
-                        navigateToEditPost(binding.root,it)
+                        navigateToEditPost(binding.root, it)
                     }
                 }
             } else {
@@ -80,15 +82,9 @@ class PostViewHolder(
                     })
             }
         }
-        Model.shared.users.observeForever { users ->
-            users?.forEach { user ->
-                Log.d("TAG", "User from dao is: ${user.json}")
-            }
-        }
-
-        Model.shared.getOtherUser(post?.sender).observeForever { user ->
+        userViewModel.getOtherUser(post?.sender).observeForever { user ->
             Log.d("TAG", "User from dao avatarUrl is: ${user?.json}")
-            user?.userName.let { username ->
+            user?.userName?.let { username ->
                 binding.senderTextView?.text = username
             }
             user?.avatarUrl?.let { avatarUrl ->
@@ -102,7 +98,6 @@ class PostViewHolder(
         }
     }
 }
-
 
 private fun navigateToEditPost(view: View, post: Post) {
     val navController = Navigation.findNavController(view)

@@ -1,6 +1,6 @@
 package com.idz.ChallengeZone
 
-import  android.os.Bundle
+import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -8,11 +8,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.idz.ChallengeZone.adapter.postAdapter.PostsRecyclerAdapter
-import com.idz.ChallengeZone.model.Model
 import com.idz.ChallengeZone.model.Post
 import com.idz.ChallengeZone.databinding.FragmentPostsListBinding
 import androidx.fragment.app.viewModels
-import com.idz.ChallengeZone.viewmodel.PostsListViewModel
+import com.idz.ChallengeZone.model.Model
+import com.idz.ChallengeZone.viewmodel.PostViewModel
 
 interface OnItemClickListenerPosts {
     fun onItemClick(position: Int)
@@ -21,28 +21,19 @@ interface OnItemClickListenerPosts {
 
 class PostsListFragment : Fragment() {
 
-    private val viewModel: PostsListViewModel by viewModels()
+    private val viewModel: PostViewModel by viewModels()
     private var adapter: PostsRecyclerAdapter? = null
     private var binding: FragmentPostsListBinding? = null
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentPostsListBinding.inflate(inflater, container, false)
-//        viewModel = ViewModelProvider(this)[PostsListViewModel::class.java]
-
-        // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_posts_list, container, false)
 
         binding?.recyclerView?.setHasFixedSize(true)
+        binding?.recyclerView?.layoutManager = LinearLayoutManager(context)
 
-        val layoutManager = LinearLayoutManager(context)
-
-        binding?.recyclerView?.layoutManager = layoutManager
-
-//        adapter = PostsRecyclerAdapter(viewModel?.posts)
         adapter = PostsRecyclerAdapter(viewModel.posts.value)
         viewModel.posts.observe(viewLifecycleOwner) {
             adapter?.update(it)
@@ -50,56 +41,36 @@ class PostsListFragment : Fragment() {
             binding?.progressBar?.visibility = View.GONE
         }
         binding?.swipeToRefresh?.setOnRefreshListener(viewModel::refreshAllPosts)
-        Model.shared.loadingState.observe(viewLifecycleOwner) { state ->
+        viewModel.loadingState.observe(viewLifecycleOwner) { state ->
             binding?.swipeToRefresh?.isRefreshing = state == Model.LoadingState.LOADING
         }
 
-        adapter?.listener = object : OnItemClickListenerPosts{
+        adapter?.listener = object : OnItemClickListenerPosts {
             override fun onItemClick(position: Int) {
                 Log.d("TAG", "On click Activity listener on position $position")
             }
 
             override fun onItemClick(post: Post?) {
-//
-//                val action = PostsListFragmentDirections.actionPostsListFragmentToPostDetailsFragment(post!!)
-//                Navigation.findNavController(view).navigate(action)
-
-
-                post?.let {
-//                    val action = PostsListFragmentDirections.actionPostsListFragmentToPostDetailsFragment(it)
-//                    binding?.root?.let {
-//                        Navigation.findNavController(it).navigate(action)
-//                    }
-                }
+                // Handle item click
             }
         }
-//        recyclerView.adapter = adapter
         binding?.recyclerView?.adapter = adapter
 
-//        val action = PostsListFragmentDirections.actionGlobalAddPostFragment()
-//        binding?.addPostButton?.setOnClickListener(Navigation.createNavigateOnClickListener(action))
         return binding?.root
     }
 
+    override fun onResume() {
+        super.onResume()
+        getAllPosts()
+    }
 
-override fun onResume() {
-    super.onResume()
-    getAllPosts()
-}
+    override fun onDestroy() {
+        super.onDestroy()
+        binding = null
+    }
 
-override fun onDestroy() {
-    super.onDestroy()
-    binding = null
-}
-private fun getAllPosts() {
-    binding?.progressBar?.visibility = View.VISIBLE
-//    Model.shared.getAllPosts {
-//        viewModel?.updatePosts(it)
-//        adapter?.set(it)
-//        adapter?.notifyDataSetChanged()
-//
-//        binding?.progressBar?.visibility = View.GONE
-//    }
-    viewModel.refreshAllPosts()
-}
+    private fun getAllPosts() {
+        binding?.progressBar?.visibility = View.VISIBLE
+        viewModel.refreshAllPosts()
+    }
 }

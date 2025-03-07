@@ -39,28 +39,6 @@ class Model private constructor() {
     companion object {
         val shared = Model()
     }
-//
-//    fun refreshAllStudents() {
-//        loadingState.postValue(LoadingState.LOADING)
-//        var lastUpdated: Long = Student.lastUpdated
-//        firebaseModel.getAllStudents(lastUpdated) { list ->
-//            executor.execute {
-//                var currentTime = lastUpdated
-//                for (student in list) {
-//                    database.studentDao().insertStudents(student)
-//                    student.lastUpdated?.let {
-//                        if (currentTime < it) {
-//                            currentTime = it
-//
-//                        }
-//                    }
-//                }
-//                Student.lastUpdated = currentTime
-//                loadingState.postValue(LoadingState.LOADED)
-//            }
-//
-//        }
-//    }
 
     fun refreshAllUsers() {
         Log.d("TAG", "refreshAllUsers")
@@ -85,25 +63,6 @@ class Model private constructor() {
         }
     }
 
-//    fun add(student: Student, image: Bitmap?, storage: Storage, callback: EmptyCallback) {
-//        firebaseModel.add(student) {
-//            image?.let {
-//                uploadTo(
-//                    storage,
-//                    image = image,
-//                    name = student.id,
-//                    callback = { uri ->
-//                        if (!uri.isNullOrBlank()) {
-//                            val st = student.copy(avatarUrl = uri)
-//                            firebaseModel.add(st, callback)
-//                        } else {
-//                            callback()
-//                        }
-//                    },
-//                )
-//            } ?: callback()
-//        }
-//    }
 
     fun refreshAllPosts() {
         //need to refresh all suer because a user can updated his details...
@@ -277,14 +236,7 @@ class Model private constructor() {
             callback(isTaken ?: false)
         }
     }
-//
-//    fun delete(student: Student, callback: EmptyCallback) {
-//        firebaseModel.delete(student, callback)
-//    }
-//
-//    fun update(student: Student, callback: EmptyCallback) {
-//        firebaseModel.update(student, callback)
-//    }
+
 
     fun deletePost(post: Post, callback: EmptyCallback) {
         firebaseModel.deletePost(post, callback)

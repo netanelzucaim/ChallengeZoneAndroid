@@ -1,31 +1,26 @@
-package com.idz.ChallengeZone//package com.idz.ChallengeZone
+package com.idz.ChallengeZone
 
-import android.content.Intent
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.CheckBox
-import android.widget.EditText
-import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
-import androidx.navigation.ui.NavigationUI
 import com.idz.ChallengeZone.databinding.FragmentEditPostBinding
 import com.idz.ChallengeZone.model.Model
 import com.idz.ChallengeZone.model.Post
+import com.idz.ChallengeZone.viewmodel.PostViewModel
 import com.squareup.picasso.Picasso
 
 class EditPostFragment : Fragment() {
     private var binding: FragmentEditPostBinding? = null
     private var cameraLauncher: ActivityResultLauncher<Void?>? = null
     private var didSetProfileImage = false
+    private val postViewModel: PostViewModel by viewModels()
     var post: Post? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,7 +36,6 @@ class EditPostFragment : Fragment() {
         binding = FragmentEditPostBinding.inflate(inflater, container, false)
         binding?.cancelButton?.setOnClickListener(::onCancelClicked)
         binding?.saveButton?.setOnClickListener(::onSaveClicked)
-//        binding?.deleteButton?.setOnClickListener(::onDeleteClicked)
         cameraLauncher = registerForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap ->
             binding?.postPicImageView?.setImageBitmap(bitmap)
             didSetProfileImage = true
@@ -66,12 +60,12 @@ class EditPostFragment : Fragment() {
             binding?.postPicImageView?.buildDrawingCache()
             val bitmap = (binding?.postPicImageView?.drawable as BitmapDrawable).bitmap
 
-            Model.shared.updatePost(post!!, bitmap, Model.Storage.CLOUDINARY) {
+            postViewModel.updatePost(post!!, bitmap, Model.Storage.CLOUDINARY) {
                 binding?.progressBar?.visibility = View.GONE
                 navigateToPostList(view)
             }
         } else {
-            Model.shared.updatePost(post!!, null, Model.Storage.CLOUDINARY) {
+            postViewModel.updatePost(post!!, null, Model.Storage.CLOUDINARY) {
                 binding?.progressBar?.visibility = View.GONE
                 navigateToPostList(view)
             }
@@ -88,25 +82,9 @@ class EditPostFragment : Fragment() {
     private fun onCancelClicked(view: View) {
         navigateToPostList(view)
     }
-//
-//    private fun onDeleteClicked(view: View){
-//        binding?.progressBar?.visibility = View.VISIBLE
-//        Model.shared.deletePost(post!!) {
-//            binding?.progressBar?.visibility = View.GONE
-//        }
-//        Navigation.findNavController(view).popBackStack()
-//        val action = EditPostFragmentDirections.actionEditPostFragmentToPostListfragment()
-//        binding?.root?.let {
-//            Navigation.findNavController(it).navigate(action)
-//        }
-//    }
 
     private fun setupView(view: View?) {
         binding?.contentEditText?.setText(post?.content)
-//        binding?.idEditText?.setText(student?.id)
-//        binding?.phoneEditText?.setText(student?.phone)
-//        binding?.addressEditText?.setText(student?.address)
-//        binding?.enabledCheckBox?.isChecked = student?.isChecked!!
         post?.postPic?.let {
             if (it.isNotBlank()) {
                 Picasso.get()
