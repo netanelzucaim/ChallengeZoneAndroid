@@ -5,34 +5,34 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.ai.client.generativeai.Chat
 import com.google.ai.client.generativeai.GenerativeModel
 import com.google.ai.client.generativeai.type.content
 import com.idz.ChallengeZone.databinding.FragmentAskAiBinding
+import com.idz.ChallengeZone.model.ChatMessage
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
+import com.idz.ChallengeZone.BuildConfig
 
 class AskAiFragment : Fragment() {
 
     private var binding: FragmentAskAiBinding? = null
-    lateinit var editTextInput: EditText
-    lateinit var editTextOutput: EditText
-    lateinit var chat: Chat
-    var stringBuilder: StringBuilder = java.lang.StringBuilder()
+    private lateinit var chatAdapter: ChatAdapter
+    private val messages = mutableListOf<ChatMessage>()
+    private lateinit var chat: Chat
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         binding = FragmentAskAiBinding.inflate(inflater, container, false)
-        val view = inflater.inflate(R.layout.fragment_ask_ai, container, false)
-        editTextInput = binding?.editTextInput!!
-        editTextOutput = binding?.editTextOutput!!
+        val view = binding?.root
+
         val generativeModel = GenerativeModel(
             modelName = "gemini-1.5-pro-latest",
-            apiKey = "AIzaSyCdqlIZetWBvJ_wsJ_1Q8CIqBX20ml5bgk"
+            apiKey = BuildConfig.GEMINI_API_KEY
         )
         chat = generativeModel.startChat(
             history = listOf(
@@ -40,43 +40,43 @@ class AskAiFragment : Fragment() {
                 content(role = "model") { text("Great to meet you. What would you like to know?") }
             )
         )
-        stringBuilder.append("Hello, I have 2 dogs in my house.\n\n")
-        stringBuilder.append("Great to meet you. What would you like to know?\n\n")
 
-        editTextOutput.setText(stringBuilder.toString())
+        chatAdapter = ChatAdapter(messages)
+        binding?.recyclerView?.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = chatAdapter
+        }
+
         binding?.button?.setOnClickListener {
             sendMessage()
         }
-        return binding?.root
+
+        return view
     }
 
     private fun sendMessage() {
-        stringBuilder.append(editTextInput.text.toString() + "\n\n")
-        binding?.button?.isEnabled = false // Disable the button
-        MainScope().launch {
-            try {
-                val result = chat.sendMessage(editTextInput.text.toString())
-                stringBuilder.append(result.text + "\n\n")
-                editTextOutput.setText(stringBuilder.toString())
-                editTextInput.setText("")
-            } finally {
-                binding?.button?.isEnabled = true // Re-enable the button
+        val userMessage = binding?.editTextInput?.text.toString()
+        if (userMessage.isNotBlank()) {
+            messages.add(ChatMessage(userMessage, true))
+            chatAdapter.notifyItemInserted(messages.size - 1)
+            binding?.recyclerView?.scrollToPosition(messages.size - 1)
+            binding?.editTextInput?.text?.clear()
+
+            binding?.button?.isEnabled = false // Disable the button
+            MainScope().launch {
+                try {
+                    val result = chat.sendMessage(userMessage)
+                    messages.add(ChatMessage(result.text ?: "No response", false))
+                    chatAdapter.notifyItemInserted(messages.size - 1)
+                    binding?.recyclerView?.scrollToPosition(messages.size - 1)
+                } finally {
+                    binding?.button?.isEnabled = true // Re-enable the button
+                }
             }
         }
     }
 
     public fun buttonSendChat(view: View) {
-        stringBuilder.append(editTextInput.text.toString() + "\n\n")
-        binding?.button?.isEnabled = false // Disable the button
-        MainScope().launch {
-            try {
-                val result = chat.sendMessage(editTextInput.text.toString())
-                stringBuilder.append(result.text + "\n\n")
-                editTextOutput.setText(stringBuilder.toString())
-                editTextInput.setText("")
-            } finally {
-                binding?.button?.isEnabled = true // Re-enable the button
-            }
-        }
+        sendMessage()
     }
 }
