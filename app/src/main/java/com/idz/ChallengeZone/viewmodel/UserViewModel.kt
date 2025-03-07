@@ -1,4 +1,4 @@
-package com.idz.ChallengeZone
+package com.idz.ChallengeZone.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

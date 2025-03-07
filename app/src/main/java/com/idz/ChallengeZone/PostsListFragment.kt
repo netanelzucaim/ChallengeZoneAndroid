@@ -12,6 +12,7 @@ import com.idz.ChallengeZone.model.Model
 import com.idz.ChallengeZone.model.Post
 import com.idz.ChallengeZone.databinding.FragmentPostsListBinding
 import androidx.fragment.app.viewModels
+import com.idz.ChallengeZone.viewmodel.PostsListViewModel
 
 interface OnItemClickListenerPosts {
     fun onItemClick(position: Int)

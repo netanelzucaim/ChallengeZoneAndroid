@@ -225,19 +225,15 @@ class FirebaseModel {
     }
 
     fun isUsernameTaken(username: String, callback: (Boolean?) -> Unit) {
-        database.collection(Constants.Collections.USERS).document(username).get()
-            .addOnCompleteListener(OnCompleteListener<DocumentSnapshot> { task ->
+        database.collection(Constants.Collections.USERS).whereEqualTo("userName", username).get()
+            .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    val document = task.result
-                    if (document != null) {
-                        callback(document.exists())
-                    } else {
-                        callback(false)
-                    }
+                    val documents = task.result
+                    callback(!documents.isEmpty)
                 } else {
                     callback(false)
                 }
-            })
+            }
     }
 
     fun isEmailTaken(email: String, callback: (Boolean?) -> Unit) {

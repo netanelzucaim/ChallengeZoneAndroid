@@ -90,32 +90,6 @@ class SignInFragment : Fragment() {
             .create().show()
     }
 
-    //    private fun signIn(email: String, password: String) {
-//        auth.signInWithEmailAndPassword(email, password)
-//            .addOnCompleteListener(requireActivity()) { task ->
-//                if (task.isSuccessful) {
-//                    // Sign in success, update UI with the signed-in user's information
-//                    Log.d(TAG, "signInWithEmail:success")
-//                    val user = auth.currentUser
-//                    updateUI(user)
-//                    // Navigate to StudentsListFragment
-//                    val action = SignInFragmentDirections.actionSignInFragmentToStudentsListFragment()
-//                    binding?.root?.let {
-//                        Navigation.findNavController(it).navigate(action)
-//                    }
-//
-//                } else {
-//                    // If sign in fails, display a message to the user.
-//                    Log.w(TAG, "signInWithEmail:failure", task.exception)
-//                    Toast.makeText(
-//                        requireContext(),
-//                        "Authentication failed.",
-//                        Toast.LENGTH_SHORT,
-//                    ).show()
-//                    updateUI(null)
-//                }
-//            }
-//    }
     private fun updateUI(user: FirebaseUser?) {
     }
 

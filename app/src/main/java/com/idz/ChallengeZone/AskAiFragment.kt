@@ -1,12 +1,13 @@
 package com.idz.ChallengeZone
 
+import com.idz.ChallengeZone.viewmodel.AskAiViewModel
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.google.ai.client.generativeai.Chat
 import com.google.ai.client.generativeai.GenerativeModel
 import com.google.ai.client.generativeai.type.content
@@ -14,13 +15,13 @@ import com.idz.ChallengeZone.databinding.FragmentAskAiBinding
 import com.idz.ChallengeZone.model.ChatMessage
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
-import com.idz.ChallengeZone.BuildConfig
+import com.idz.ChallengeZone.adapter.chatAdapter.ChatRecyclerAdapter
 
 class AskAiFragment : Fragment() {
 
     private var binding: FragmentAskAiBinding? = null
-    private lateinit var chatAdapter: ChatAdapter
-    private val messages = mutableListOf<ChatMessage>()
+    private lateinit var chatAdapter: ChatRecyclerAdapter
+    private val viewModel: AskAiViewModel by viewModels()
     private lateinit var chat: Chat
 
     override fun onCreateView(
@@ -41,10 +42,14 @@ class AskAiFragment : Fragment() {
             )
         )
 
-        chatAdapter = ChatAdapter(messages)
+        chatAdapter = ChatRecyclerAdapter(viewModel.messages.value ?: mutableListOf())
         binding?.recyclerView?.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = chatAdapter
+        }
+
+        viewModel.messages.observe(viewLifecycleOwner) {
+            chatAdapter.notifyDataSetChanged()
         }
 
         binding?.button?.setOnClickListener {
@@ -57,18 +62,20 @@ class AskAiFragment : Fragment() {
     private fun sendMessage() {
         val userMessage = binding?.editTextInput?.text.toString()
         if (userMessage.isNotBlank()) {
-            messages.add(ChatMessage(userMessage, true))
-            chatAdapter.notifyItemInserted(messages.size - 1)
-            binding?.recyclerView?.scrollToPosition(messages.size - 1)
+            val chatMessage = ChatMessage(userMessage, true)
+            viewModel.addMessage(chatMessage)
+            chatAdapter.notifyItemInserted(viewModel.messages.value?.size?.minus(1) ?: 0)
+            binding?.recyclerView?.scrollToPosition(viewModel.messages.value?.size?.minus(1) ?: 0)
             binding?.editTextInput?.text?.clear()
 
             binding?.button?.isEnabled = false // Disable the button
             MainScope().launch {
                 try {
                     val result = chat.sendMessage(userMessage)
-                    messages.add(ChatMessage(result.text ?: "No response", false))
-                    chatAdapter.notifyItemInserted(messages.size - 1)
-                    binding?.recyclerView?.scrollToPosition(messages.size - 1)
+                    val responseMessage = ChatMessage(result.text ?: "No response", false)
+                    viewModel.addMessage(responseMessage)
+                    chatAdapter.notifyItemInserted(viewModel.messages.value?.size?.minus(1) ?: 0)
+                    binding?.recyclerView?.scrollToPosition(viewModel.messages.value?.size?.minus(1) ?: 0)
                 } finally {
                     binding?.button?.isEnabled = true // Re-enable the button
                 }

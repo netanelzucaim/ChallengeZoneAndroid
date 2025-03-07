@@ -1,5 +1,6 @@
 package com.idz.ChallengeZone
 
+import android.app.AlertDialog
 import android.graphics.drawable.BitmapDrawable
 import  android.os.Bundle
 import android.util.Log
@@ -17,12 +18,9 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
 import com.idz.ChallengeZone.databinding.FragmentProfileBinding
 import com.idz.ChallengeZone.model.User
+import com.idz.ChallengeZone.viewmodel.PostsListViewModel
 import com.squareup.picasso.Picasso
-//
-//interface OnItemClickListenerPosts {
-//    fun onItemClick(position: Int)
-//    fun onItemClick(post: Post?)
-//}
+
 
 class ProfileFragment : Fragment() {
 
@@ -86,22 +84,30 @@ class ProfileFragment : Fragment() {
 
     private fun onSaveClicked(view: View) {
         binding?.progressBar?.visibility = View.VISIBLE
-        setUser()
-        if (didSetProfileImage) {
-            binding?.avatarImageView?.isDrawingCacheEnabled = true
-            binding?.avatarImageView?.buildDrawingCache()
-            val bitmap = (binding?.avatarImageView?.drawable as BitmapDrawable).bitmap
+        Model.shared.isUserNameTaken(binding?.userNameEditText?.text.toString()) { isTaken ->
+            if (isTaken && binding?.userNameEditText?.text.toString() != user?.userName) {
+                binding?.progressBar?.visibility = View.GONE
+                makeAToast("Username already been taken")
+            } else {
+                    setUser()
+                    if (didSetProfileImage) {
+                        binding?.avatarImageView?.isDrawingCacheEnabled = true
+                        binding?.avatarImageView?.buildDrawingCache()
+                        val bitmap = (binding?.avatarImageView?.drawable as BitmapDrawable).bitmap
 
-            Model.shared.updateUser(user!!, bitmap, Model.Storage.CLOUDINARY) {
-                binding?.progressBar?.visibility = View.GONE
-            }
-        } else {
-            Model.shared.updateUser(user!!, null, Model.Storage.CLOUDINARY) {
-                binding?.progressBar?.visibility = View.GONE
-            }
+                        Model.shared.updateUser(user!!, bitmap, Model.Storage.CLOUDINARY) {
+                            binding?.progressBar?.visibility = View.GONE
+                            getAllPosts() // Refresh the posts list
+                        }
+                    } else {
+                        Model.shared.updateUser(user!!, null, Model.Storage.CLOUDINARY) {
+                            binding?.progressBar?.visibility = View.GONE
+                            getAllPosts() // Refresh the posts list
+                        }
+                    }
+                }
         }
     }
-
 
     private fun setupView(view: View?) {
         Model.shared.getLoggedUser().observeForever { loggedUser ->
@@ -110,42 +116,17 @@ class ProfileFragment : Fragment() {
             user?.userName?.let { userName ->
                 binding?.userNameEditText?.setText(userName)
             }
-            user?.avatarUrl?.let { avatarUrl ->
-                if (avatarUrl.isNotBlank()) {
+//            user?.avatarUrl?.let {
+//                if (it.isNotBlank()) {
 //                    Picasso.get()
-//                        .load(avatarUrl)
+//                        .load(it)
 //                        .placeholder(R.drawable.avatar)
 //                        .into(binding?.avatarImageView)
-                }
-            }
+//                }
+//            }
         }
     }
 
-//    private fun onSaveClicked(view: View) {
-//        binding?.progressBar?.visibility = View.VISIBLE
-//        setPost()
-//        if (didSetProfileImage) {
-//            binding?.postPicImageView?.isDrawingCacheEnabled = true
-//            binding?.postPicImageView?.buildDrawingCache()
-//            val bitmap = (binding?.postPicImageView?.drawable as BitmapDrawable).bitmap
-//
-//            Model.shared.updatePost(post!!, bitmap, Model.Storage.CLOUDINARY) {
-//                binding?.progressBar?.visibility = View.GONE
-//                val action = EditPostFragmentDirections.actionEditPostFragmentToPostListfragment()
-//                binding?.root?.let {
-//                    Navigation.findNavController(it).navigate(action)
-//                }
-//            }
-//        } else {
-//            Model.shared.updatePost(post!!, null, Model.Storage.CLOUDINARY) {
-//                binding?.progressBar?.visibility = View.GONE
-//                val action = EditPostFragmentDirections.actionEditPostFragmentToPostListfragment()
-//                binding?.root?.let {
-//                    Navigation.findNavController(it).navigate(action)
-//                }
-//            }
-//        }
-//    }
 private fun onLogoutClicked(view: View) {
     Model.shared.logOut()
     val navController = Navigation.findNavController(view)
@@ -175,5 +156,13 @@ private fun getAllPosts() {
             email = user?.email ?: ""
         )
     }
+    fun makeAToast(text: String?, navigate: Boolean = false) {
+        AlertDialog.Builder(context)
+            .setTitle("Notification")
+            .setMessage(text)
+            .create().show()
+    }
+
+
 
 }

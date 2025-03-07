@@ -1,9 +1,8 @@
-package com.idz.ChallengeZone
+package com.idz.ChallengeZone.viewmodel
 
 import androidx.lifecycle.ViewModel
 import com.idz.ChallengeZone.model.Post
 
-import android.view.Display.Mode
 import androidx.lifecycle.LiveData
 import com.idz.ChallengeZone.model.Model
 

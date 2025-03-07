@@ -12,14 +12,13 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import com.idz.ChallengeZone.databinding.FragmentNewPostBinding
 import com.idz.ChallengeZone.model.Model
 import com.idz.ChallengeZone.model.Post
 import com.idz.ChallengeZone.model.User
+import com.idz.ChallengeZone.viewmodel.UserViewModel
 import java.util.UUID
-
 
 class NewPostFragment : Fragment() {
     private var binding: FragmentNewPostBinding? = null
@@ -27,6 +26,7 @@ class NewPostFragment : Fragment() {
     private var didSetProfileImage = false
     private val userViewModel: UserViewModel by viewModels()
     var user: User? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
@@ -47,14 +47,11 @@ class NewPostFragment : Fragment() {
             user = newUser
         }
 
-
         binding = FragmentNewPostBinding.inflate(inflater, container, false)
         binding?.btnCreatePost?.setOnClickListener(::onSaveClicked)
-
         cameraLauncher = registerForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap ->
             binding?.postPicImageView?.setImageBitmap(bitmap)
             didSetProfileImage = true
-
         }
 
         binding?.takePhotoButton?.setOnClickListener {
@@ -62,12 +59,13 @@ class NewPostFragment : Fragment() {
         }
 
         return binding?.root
-
     }
+
     override fun onDestroy() {
         super.onDestroy()
         binding = null
     }
+
     private fun onSaveClicked(view: View) {
         var currentUser = ""
         Model.shared.getLoggedUser()?.observe(viewLifecycleOwner) { user ->
@@ -91,7 +89,6 @@ class NewPostFragment : Fragment() {
                     navController.popBackStack(R.id.newPostFragment, true)
                     val action = NewPostFragmentDirections.actionGlobalPostListFragment()
                     navController.navigate(action)
-
                 }
             } else {
                 Model.shared.addPost(post, null, Model.Storage.CLOUDINARY) {
