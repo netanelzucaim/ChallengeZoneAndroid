@@ -1,11 +1,9 @@
 package com.idz.ChallengeZone
 
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
+import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.NavController
@@ -15,6 +13,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
     var navController: NavController? = null
+    private lateinit var bottomNavigationView: BottomNavigationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,56 +25,29 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        // TODO: Step 1 - Add Student Button ✅
-        // TODO: Step 2 - Navigate to AddStudentActivity
-        // TODO: Step 3 - Create AddStudentLayout
-        // TODO: Step 4 - Save Student
-
-        val toolBar: Toolbar = findViewById(R.id.main_toolbar)
-        setSupportActionBar(toolBar)
-
         val navHostController: NavHostFragment? = supportFragmentManager.findFragmentById(R.id.main_nav_host) as? NavHostFragment
         navController = navHostController?.navController
-        navController?.let {
-            NavigationUI.setupActionBarWithNavController(
-                activity = this,
-                navController = it
-            )
-        }
-        val bottomNavigationView: BottomNavigationView = findViewById(R.id.bottom_bar)
+        bottomNavigationView = findViewById(R.id.bottom_bar)
         navController?.let { NavigationUI.setupWithNavController(bottomNavigationView, it) }
-    }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu, menu)
-        return super.onCreateOptionsMenu(menu)
-    }
-    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-        // Get the current destination fragment
-        val currentFragment = navController?.currentDestination?.id
+//        bottomNavigationView.setOnNavigationItemSelectedListener { item ->
+//            when (item.itemId) {
+//                R.id.newPostFragment -> {
+//                    navController?.navigate(R.id.action_global_newPostFragment)
+//                    true
+//                }
+//                else -> false
+//            }
+//        }
 
-        // Show/hide menu items based on current fragment
-        menu?.findItem(R.id.editStudentFragment)?.isVisible = currentFragment == R.id.studentDetailsFragment
-        menu?.findItem(R.id.addStudentFragment)?.isVisible = currentFragment == R.id.studentListFragment
-
-        return super.onPrepareOptionsMenu(menu)
-    }
-
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            android.R.id.home -> {
-                navController?.popBackStack()
-                true
-            }
-            else -> {
-              // let the onOptionsItemSelected in editStudentFragment to handle it
-                if (item.itemId == R.id.editStudentFragment) {
-                    return false
-                } else {
-                    navController?.let { NavigationUI.onNavDestinationSelected(item, it) }
+        navController?.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.signInFragment, R.id.signUpFragment -> {
+                    bottomNavigationView.visibility = View.GONE
                 }
-                true
+                else -> {
+                    bottomNavigationView.visibility = View.VISIBLE
+                }
             }
         }
     }

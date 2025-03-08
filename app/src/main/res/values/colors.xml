@@ -5,4 +5,5 @@
     <color name="black">#000000</color> <!-- צבע הטקסט והכפתור השחור -->
     <color name="dark_gray">#757575</color> <!-- צבע לטקסט משני כמו תיאור המסך -->
     <color name="primary">#000000</color> <!-- צבע דומיננטי נוסף (למשל, לכפתור ההמשך) -->
+    <color name="transparent">#00FFFFFF</color>
 </resources>

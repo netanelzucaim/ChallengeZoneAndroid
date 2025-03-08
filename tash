@@ -1,0 +1,158 @@
+[33mcommit b8f3773cb8895aa03c8a691b2df4284912c7eef1[m[33m ([m[1;36mHEAD -> [m[1;32mposts[m[33m, [m[1;31morigin/posts[m[33m)[m
+Author: Your Name <you@example.com>
+Date:   Sun Feb 23 21:23:49 2025 +0200
+
+    finish uploading image
+
+[33mcommit fa3bf82cd4eb5ea3d0468d69a6c38642eef12e19[m
+Author: Your Name <you@example.com>
+Date:   Sat Feb 22 23:04:28 2025 +0200
+
+    working on user add
+
+[33mcommit 97d8af46ae7b52199b7c0c1f92f68eb9715ba7a4[m
+Author: Your Name <you@example.com>
+Date:   Fri Feb 21 13:57:21 2025 +0200
+
+    adding post
+
+[33mcommit d7edeff178475519f66672de0a0cb5f72d141681[m
+Author: Your Name <you@example.com>
+Date:   Wed Feb 19 11:03:19 2025 +0200
+
+    working posts list
+
+[33mcommit 5ff26d3f39283616358fb8a31bbc220007ab4221[m[33m ([m[1;31morigin/main[m[33m, [m[1;32mmain[m[33m)[m
+Merge: afa6c1a 91fb106
+Author: morielnoam <morieln12@gmail.com>
+Date:   Tue Feb 18 18:38:14 2025 +0200
+
+    Merge pull request #3 from netanelzucaim/live_data
+    
+    Live data
+
+[33mcommit 91fb106ac071d2ffe631d804aa4e07e32b540450[m[33m ([m[1;31morigin/live_data[m[33m, [m[1;32mlive_data[m[33m)[m
+Author: Your Name <you@example.com>
+Date:   Sun Feb 16 02:14:24 2025 +0200
+
+    adding live data and signInAndSignUp
+
+[33mcommit 2c6ad3e6be26dbcbec3228d75b39bbb2903f4209[m
+Author: Your Name <you@example.com>
+Date:   Fri Feb 14 11:12:09 2025 +0200
+
+    live data
+
+[33mcommit afa6c1a5f031b75ca31be956922584b072b5a703[m
+Merge: ff53670 a5f5aff
+Author: netanelzucaim <112327735+netanelzucaim@users.noreply.github.com>
+Date:   Thu Jan 30 18:30:42 2025 +0200
+
+    Merge pull request #2 from netanelzucaim/change_project_namespace_to_challengezone
+    
+    made all the neccessary changes to change thr name of the project fro…
+
+[33mcommit ff53670a042bb9a9b5db92d81a7fd0659460e7e3[m
+Merge: 0c85f3d 42d941b
+Author: netanelzucaim <112327735+netanelzucaim@users.noreply.github.com>
+Date:   Thu Jan 30 18:29:40 2025 +0200
+
+    Merge pull request #1 from netanelzucaim/added_app_xml_from_figma
+    
+    created xml files to the screens from the mockups and added the pictu…
+
+[33mcommit a5f5aff7ee3e0323024cf176c3d7702166ad5c1c[m[33m ([m[1;31morigin/change_project_namespace_to_challengezone[m[33m)[m
+Author: Noam Moriel <morieln12@gmail.com>
+Date:   Sat Jan 25 15:45:04 2025 +0200
+
+    made all the neccessary changes to change thr name of the project from colman24class2 to challengezone
+
+[33mcommit 42d941b00f74c04e3014705f2b775821ef466e25[m[33m ([m[1;31morigin/added_app_xml_from_figma[m[33m)[m
+Author: Noam Moriel <morieln12@gmail.com>
+Date:   Sat Jan 25 15:17:09 2025 +0200
+
+    created xml files to the screens from the mockups and added the pictures to the drawable
+
+[33mcommit 0c85f3db75095d0e3cf8df4414a8ede04c87b2e4[m
+Author: Your Name <you@example.com>
+Date:   Fri Jan 24 10:56:53 2025 +0200
+
+    firebase/dao implementatio ns
+
+[33mcommit 6e424aa0a0a944f6c6fa5144deb42a30fdef974a[m
+Author: Your Name <you@example.com>
+Date:   Sun Jan 19 00:05:52 2025 +0200
+
+    finish uploading to cloudinary
+
+[33mcommit d5efca25f02b1903d36d56707863c503154b4145[m
+Author: Your Name <you@example.com>
+Date:   Fri Jan 17 13:35:54 2025 +0200
+
+    finish adding firebase
+
+[33mcommit 17a498da014e06bd255ef2f71f06574abe690a39[m[33m ([m[1;32mromm_changes[m[33m)[m
+Author: Your Name <you@example.com>
+Date:   Wed Jan 15 22:25:43 2025 +0200
+
+    adding firebase
+
+[33mcommit 081f90c74c50aaaa332eb446d45503d1bb212cf1[m
+Author: Your Name <you@example.com>
+Date:   Tue Jan 14 00:08:33 2025 +0200
+
+    adding change of commit 2 before changing other code
+
+[33mcommit cf8b8ad83d9fcaa785f5210eb378d694bba0bf73[m
+Author: Your Name <you@example.com>
+Date:   Mon Jan 13 23:09:05 2025 +0200
+
+    adding first commit of 1.1
+
+[33mcommit 1fe327f32a3bffa21f4c5773ee8bec025afc76f4[m[33m ([m[1;32madding_bottom_bar[m[33m)[m
+Author: Your Name <you@example.com>
+Date:   Wed Jan 8 22:25:04 2025 +0200
+
+    adding bottom bar
+
+[33mcommit 48b072aeac869ffd833d99c4176cb7af1d5ea133[m[33m ([m[1;32mconvert_to_fragments[m[33m)[m
+Author: Your Name <you@example.com>
+Date:   Wed Jan 8 21:53:03 2025 +0200
+
+    finish
+
+[33mcommit 0b4b9b355f9af36657c6a6fbd815cc86c3fc2b41[m
+Author: Your Name <you@example.com>
+Date:   Wed Jan 8 21:50:48 2025 +0200
+
+    delete unrelevant activities
+
+[33mcommit 6909d54b495e95d0fafea9c61ad3e5f3137a184d[m
+Author: Your Name <you@example.com>
+Date:   Wed Jan 8 21:08:24 2025 +0200
+
+    finish update the code
+
+[33mcommit 32b528b4dfed109cb556f4315e96ed991c464b06[m
+Author: Your Name <you@example.com>
+Date:   Wed Jan 8 17:54:09 2025 +0200
+
+    finish nav bar
+
+[33mcommit 268b10048e6830244d3f0f3e35ecde434fc2f127[m
+Author: Your Name <you@example.com>
+Date:   Fri Jan 3 16:54:28 2025 +0200
+
+    before changing to arguments
+
+[33mcommit 2b2fbbbbc987bb0b2f2abf7d8c1b4e4834c2ee96[m
+Author: Your Name <you@example.com>
+Date:   Fri Jan 3 15:10:42 2025 +0200
+
+    nit project withn dependencies
+
+[33mcommit a2f0ed2f52d709b4f356a387aa737cfb8344b289[m
+Author: Your Name <you@example.com>
+Date:   Fri Jan 3 15:10:22 2025 +0200
+
+    first commit

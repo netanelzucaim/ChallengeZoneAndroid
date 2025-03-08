@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/postListFragment">
+
+    <fragment
+        android:id="@+id/signInFragment"
+        android:name="com.idz.ChallengeZone.SignInFragment"
+        android:label="fragment_sign_in"
+        tools:layout="@layout/fragment_sign_in" >
+        <action
+            android:id="@+id/action_signInFragment_to_signUpFragment"
+            app:destination="@id/signUpFragment" />
+        <action
+            android:id="@+id/action_signInFragment_to_postsListFragment"
+            app:destination="@id/postListFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/signUpFragment"
+        android:name="com.idz.ChallengeZone.SignUpFragment"
+        android:label="fragment_sign_up"
+        tools:layout="@layout/fragment_sign_in" >
+        <action
+            android:id="@+id/action_signUpFragment_to_signInFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/postListFragment"
+        android:name="com.idz.ChallengeZone.PostsListFragment"
+        android:label="posts list"
+        tools:layout="@layout/fragment_posts_list">
+    </fragment>
+
+    <fragment
+        android:id="@+id/newPostFragment"
+        android:name="com.idz.ChallengeZone.NewPostFragment"
+        android:label="new student"
+        tools:layout="@layout/fragment_add_student" />
+
+
+    <argument
+        android:name="name"
+        app:argType="string" />
+
+    <action
+        android:id="@+id/action_global_newPostFragment"
+        app:destination="@id/newPostFragment" />
+
+</navigation>
