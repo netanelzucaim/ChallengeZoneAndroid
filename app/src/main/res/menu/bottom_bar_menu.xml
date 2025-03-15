@@ -4,18 +4,18 @@
 
     <item
         android:id="@+id/postListFragment"
-        android:icon="@android:drawable/btn_star_big_on"
-        android:title="list" />
+        android:icon="@drawable/home"
+        android:title="Home" />
     <item
         android:id="@+id/newPostFragment"
-        android:icon="@android:drawable/ic_input_add"
-        android:title="add" />
+        android:icon="@drawable/library_add"
+        android:title="Add" />
     <item
         android:id="@+id/profileFragment"
-        android:icon="@drawable/avatar"
-        android:title="profile" />
+        android:icon="@drawable/person"
+        android:title="Profile" />
     <item
         android:id="@+id/askAiFragment"
-        android:icon="@drawable/avatar"
-        android:title="askAi" />
+        android:icon="@drawable/chat"
+        android:title="Ask Ai" />
 </menu>
