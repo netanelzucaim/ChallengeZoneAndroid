@@ -12,49 +12,47 @@
         android:orientation="vertical"
         android:gravity="center_horizontal">
 
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="428dp"
-            android:layout_height="278dp"
-            android:scaleType="centerInside"/>
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toTopOf="parent"-->
-<!--            app:srcCompat="@drawable/avatar" />-->
-
         <!-- Title -->
-        <TextView
-            android:id="@+id/appTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Challenge Zone"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="32dp"
-            android:textColor="@android:color/black" />
 
         <!-- Subtitle -->
-        <TextView
-            android:id="@+id/signInTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Sign up"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp"
-            android:textColor="@android:color/black" />
 
         <!-- Instructions -->
+
         <TextView
             android:id="@+id/signInDescription"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Enter your username and sign up"
-            android:textSize="14sp"
             android:layout_marginBottom="16dp"
-            android:textColor="@android:color/black" />
+            android:text="Enter your username and sign up"
+            android:textColor="@android:color/black"
+            android:textSize="14sp" />
 
-        <!-- Username Input -->
+        <TextView
+            android:id="@+id/appTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:text="Challenge Zone"
+            android:textColor="@android:color/black"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/signInTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="Sign up"
+            android:textColor="@android:color/black"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="428dp"
+            android:layout_height="110dp"
+            android:scaleType="centerInside" />
+
         <EditText
             android:id="@+id/usernameInput"
             android:layout_width="match_parent"
@@ -127,6 +125,16 @@
             android:textColor="@color/white"
             android:padding="12dp"
             android:layout_marginBottom="16dp" />
+
+        <Button
+            android:id="@+id/signInButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Already have an acoount? Sign in"
+            android:textSize="14sp"
+            android:layout_marginBottom="32dp"
+            android:backgroundTint="@color/light_gray"
+            android:textColor="@color/black" />
 
     </LinearLayout>
 </ScrollView>
