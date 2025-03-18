@@ -1,14 +1,11 @@
 package com.idz.ChallengeZone.model
 
 import android.content.Context
-import android.os.Parcel
-import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import com.idz.ChallengeZone.base.MyApplication
-import com.idz.ChallengeZone.model.Post.Companion
 
 @Entity
 data class User(
@@ -19,29 +16,7 @@ data class User(
     var email: String,
     val lastUpdated: Long? = null
 
-) : Parcelable {
-
-    constructor(parcel: Parcel) : this(
-        parcel.readString() ?: "",
-        parcel.readString() ?: "",
-        parcel.readString() ?: "",
-        parcel.readString() ?: "",
-        parcel.readString() ?: "",
-        parcel.readLong()
-    )
-
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(id)
-        parcel.writeString(userName)
-        parcel.writeString(password)
-        parcel.writeString(avatarUrl)
-        parcel.writeString(email)
-        parcel.writeLong(lastUpdated ?: 0)
-    }
-
-    override fun describeContents(): Int {
-        return 0
-    }
+)  {
 
     companion object {
 
@@ -80,18 +55,6 @@ data class User(
                 email = email,  // Assuming address is empty in this case
                 lastUpdated = longTimestamp
             )
-        }
-
-        // Parcelable.Creator implementation
-        @JvmField
-        val CREATOR: Parcelable.Creator<User> = object : Parcelable.Creator<User> {
-            override fun createFromParcel(parcel: Parcel): User {
-                return User(parcel)
-            }
-
-            override fun newArray(size: Int): Array<User?> {
-                return arrayOfNulls(size)
-            }
         }
     }
 
