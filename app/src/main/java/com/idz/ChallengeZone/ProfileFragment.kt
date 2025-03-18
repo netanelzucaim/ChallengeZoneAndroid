@@ -19,6 +19,7 @@ import com.idz.ChallengeZone.viewmodel.AuthViewModel
 import com.idz.ChallengeZone.viewmodel.PostViewModel
 import com.idz.ChallengeZone.viewmodel.UserViewModel
 import com.idz.ChallengeZone.model.Model
+import com.squareup.picasso.Picasso
 
 class ProfileFragment : Fragment() {
 
@@ -29,7 +30,12 @@ class ProfileFragment : Fragment() {
     private var binding: FragmentProfileBinding? = null
     private var cameraLauncher: ActivityResultLauncher<Void?>? = null
     private var didSetProfileImage = false
+    private var isEditing = false  // משתנה שמייצג אם אנחנו במצב עריכה
     var user: User? = null
+
+    // משתנים לשמירת הערכים המקוריים
+    private var originalUserName: String? = null
+    private var originalAvatarUrl: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,20 +43,37 @@ class ProfileFragment : Fragment() {
     ): View? {
 
         binding = FragmentProfileBinding.inflate(inflater, container, false)
-        binding?.saveButton?.setOnClickListener(::onSaveClicked)
-        binding?.logoutButton?.setOnClickListener(::onLogoutClicked)
+
+        // כפתור ה-Edit/Save
+        binding?.saveButton?.setOnClickListener {
+            if (isEditing) {
+                onSaveClicked(it)  // אם אנחנו במצב עריכה - שמור את השינויים
+            } else {
+                enableEditing()  // אם אנחנו במצב צפייה - הפוך לעריכה
+            }
+        }
+
+        // כפתור ה-Logout/Cancel
+        binding?.logoutButton?.setOnClickListener {
+            if (isEditing) {
+                cancelEditing()  // אם אנחנו במצב עריכה - בצע ביטול
+            } else {
+                onLogoutClicked(it)  // אם אנחנו במצב צפייה - בצע התנתקות
+            }
+        }
+
+        // הפעלת מצלמה
         cameraLauncher = registerForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap ->
             binding?.avatarImageView?.setImageBitmap(bitmap)
             didSetProfileImage = true
         }
+
         binding?.takePhotoButton?.setOnClickListener {
             cameraLauncher?.launch(null)
         }
 
         setupView()
         setupRecyclerView()
-
-        observeViewModel()
 
         return binding?.root
     }
@@ -66,6 +89,7 @@ class ProfileFragment : Fragment() {
         }
         binding?.swipeToRefresh?.setOnRefreshListener(postsViewModel::refreshAllPosts)
         binding?.recyclerView?.adapter = adapter
+        disableEditing()  // ברגע שהרשימה נטענת, המצב יהיה read-only
     }
 
     private fun setupView() {
@@ -74,7 +98,73 @@ class ProfileFragment : Fragment() {
             user?.userName?.let { userName ->
                 binding?.userNameEditText?.setText(userName)
             }
+            user?.avatarUrl?.let { avatarUrl ->
+                if (avatarUrl.isNotBlank()) {
+                    Picasso.get()
+                        .load(avatarUrl)
+                        .placeholder(R.drawable.avatar)
+                        .into(binding?.avatarImageView)
+                }
+            }
+
+            // שמור את הערכים המקוריים לפני המעבר לעריכה
+            originalUserName = user?.userName
+            originalAvatarUrl = user?.avatarUrl
+
+            // הפוך את השדות למצב read-only ברגע שהמשתמש טוען את המידע
+            disableEditing()
         }
+    }
+
+    private fun enableEditing() {
+        // שמור את הערכים המקוריים לפני שינוי
+        originalUserName = binding?.userNameEditText?.text.toString()
+        originalAvatarUrl = user?.avatarUrl
+
+        // הפוך את השדות לעריכה
+        binding?.userNameEditText?.isEnabled = true
+        binding?.takePhotoButton?.isEnabled = true
+        binding?.saveButton?.text = "Save" // שינוי הכפתור ל-Save
+        isEditing = true
+        updateLogoutButton() // עדכון כפתור ה-logout ל-Cancel במצב עריכה
+    }
+
+    private fun disableEditing() {
+        // הפוך את השדות ללא ניתנים לעריכה
+        binding?.userNameEditText?.isEnabled = false
+        binding?.takePhotoButton?.isEnabled = false
+        binding?.saveButton?.text = "Edit" // שינוי הכפתור חזרה ל-Edit
+        isEditing = false
+        updateLogoutButton() // עדכון כפתור ה-logout ל-Logout במצב צפייה
+    }
+
+    private fun updateLogoutButton() {
+        if (isEditing) {
+            binding?.logoutButton?.text = "Cancel" // שינוי ל-Cancel במצב עריכה
+        } else {
+            binding?.logoutButton?.text = "Logout" // החזר ל-Logout במצב צפייה
+        }
+    }
+
+    private fun cancelEditing() {
+        // החזר את הערכים המקוריים למצבם הקודם
+        binding?.userNameEditText?.setText(originalUserName)
+        user?.avatarUrl = originalAvatarUrl.toString()
+        Picasso.get()
+            .load(user?.avatarUrl)
+            .placeholder(R.drawable.avatar)
+            .into(binding?.avatarImageView)
+
+        // החזר את המצב לקריאה בלבד
+        disableEditing()
+    }
+
+    private fun onSaveClicked(view: View) {
+        // אם אנחנו במצב עריכה, נבצע שמירה
+        binding?.progressBar?.visibility = View.VISIBLE
+        authViewModel.checkUsernameTaken(binding?.userNameEditText?.text.toString())
+
+        observeViewModel()
     }
 
     private fun observeViewModel() {
@@ -83,14 +173,9 @@ class ProfileFragment : Fragment() {
                 binding?.progressBar?.visibility = View.GONE
                 makeAToast("Username already been taken")
             } else {
-                updateUser()
+                updateUser()  // אם לא נמצא שם משתמש כפול, נעדכן את המשתמש
             }
         }
-    }
-
-    private fun onSaveClicked(view: View) {
-        binding?.progressBar?.visibility = View.VISIBLE
-        authViewModel.checkUsernameTaken(binding?.userNameEditText?.text.toString())
     }
 
     private fun updateUser() {
@@ -102,12 +187,14 @@ class ProfileFragment : Fragment() {
 
             userViewModel.updateUser(user!!, bitmap, Model.Storage.CLOUDINARY) {
                 binding?.progressBar?.visibility = View.GONE
-                getAllPosts() // Refresh the posts list
+                getAllPosts()  // Refresh the posts list
+                disableEditing()  // החזר את המצב ל-read only
             }
         } else {
             userViewModel.updateUser(user!!, null, Model.Storage.CLOUDINARY) {
                 binding?.progressBar?.visibility = View.GONE
-                getAllPosts() // Refresh the posts list
+                getAllPosts()  // Refresh the posts list
+                disableEditing()  // החזר את המצב ל-read only
             }
         }
     }
