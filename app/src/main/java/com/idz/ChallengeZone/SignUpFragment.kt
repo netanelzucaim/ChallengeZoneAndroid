@@ -37,6 +37,7 @@ class SignUpFragment : Fragment() {
     ): View? {
         binding = FragmentSignUpBinding.inflate(inflater, container, false)
         setupRegisterButton()
+        setupSignInButton()
         cameraLauncher = registerForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap ->
             binding?.imageView?.setImageBitmap(bitmap)
             didSetProfileImage = true
@@ -93,7 +94,7 @@ class SignUpFragment : Fragment() {
                 val username = binding?.usernameInput?.text.toString()
                 val password = binding?.passwordInput?.text.toString()
                 val email = binding?.emailInput?.text.toString()
-                val newUser = User(id, username, password, "", email)
+                val newUser = User(id, username, password, "https://res.cloudinary.com/ddmzbwrxz/image/upload/v1742057642/challengeZone_gjjsef.png", email)
 
                 if (didSetProfileImage) {
                     binding?.imageView?.isDrawingCacheEnabled = true
@@ -119,6 +120,15 @@ class SignUpFragment : Fragment() {
         val navController = Navigation.findNavController(requireView())
         val action = SignUpFragmentDirections.actionGlobalSignInFragment()
         navController.navigate(action)
+    }
+
+    private fun setupSignInButton() {
+        binding?.signInButton?.setOnClickListener {
+            val action = SignUpFragmentDirections.actionSignUpFragmentToSignInFragment()
+            binding?.root?.let {
+                Navigation.findNavController(it).navigate(action)
+            }
+        }
     }
 
     fun makeAToast(text: String?, navigate: Boolean = false) {
