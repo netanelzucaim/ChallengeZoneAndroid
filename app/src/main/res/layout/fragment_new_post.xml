@@ -106,45 +106,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <!-- Home Button -->
-        <ImageButton
-            android:id="@+id/btnHome"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:src="@drawable/home_button"
-            android:contentDescription="Home"
-            android:background="?attr/selectableItemBackgroundBorderless" />
-
-        <!-- Add Post Button -->
-        <ImageButton
-            android:id="@+id/btnAddPost"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:src="@drawable/add_post_button_bold"
-            android:contentDescription="Add Post"
-            android:background="?attr/selectableItemBackgroundBorderless" />
-
-        <!-- Challenges Button -->
-        <ImageButton
-            android:id="@+id/btnChallenges"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:src="@drawable/challenges_button"
-            android:contentDescription="Challenges"
-            android:background="?attr/selectableItemBackgroundBorderless" />
-
-        <!-- Profile Button -->
-        <ImageButton
-            android:id="@+id/btnProfile"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Profile"
-            android:src="@drawable/profile_button" />
         <ProgressBar
             android:id="@+id/progressBar"
             style="?android:attr/progressBarStyle"
