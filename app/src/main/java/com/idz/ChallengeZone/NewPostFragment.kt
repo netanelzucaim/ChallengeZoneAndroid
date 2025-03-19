@@ -46,7 +46,7 @@ class NewPostFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        userViewModel.fetchUser()?.observe(viewLifecycleOwner) { newUser ->
+        userViewModel.fetchUser(viewLifecycleOwner)?.observe(viewLifecycleOwner) { newUser ->
             Log.d("TAG", "current logged User is: $user")
             user = newUser
         }
@@ -72,7 +72,7 @@ class NewPostFragment : Fragment() {
 
     private fun onSaveClicked(view: View) {
         var currentUser = ""
-        authViewModel.getLoggedUser()?.observe(viewLifecycleOwner) { user ->
+        authViewModel.getLoggedUser(viewLifecycleOwner).observe(viewLifecycleOwner) { user ->
             currentUser = user?.id ?: ""
             Log.d("TAG", "current user after observer is $currentUser")
             val post = Post(

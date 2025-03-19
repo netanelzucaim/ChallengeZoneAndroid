@@ -9,41 +9,55 @@ import com.idz.ChallengeZone.model.Post
 import com.squareup.picasso.Picasso
 import android.view.View
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import com.idz.ChallengeZone.viewmodel.AuthViewModel
 import com.idz.ChallengeZone.viewmodel.PostViewModel
 import com.idz.ChallengeZone.viewmodel.UserViewModel
 import com.idz.ChallengeZone.PostsListFragmentDirections
-
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 class PostViewHolder(
     private val binding: PostListRowBinding,
-    listener: OnItemClickListenerPosts?
-): RecyclerView.ViewHolder(binding.root) {
+    listener: OnItemClickListenerPosts?,
+    private val sourceScreen: String
+) : RecyclerView.ViewHolder(binding.root) {
     private var post: Post? = null
-    private val postViewModel: PostViewModel = ViewModelProvider(itemView.context as FragmentActivity).get(PostViewModel::class.java)
-    private val authViewModel: AuthViewModel = ViewModelProvider(itemView.context as FragmentActivity).get(AuthViewModel::class.java)
-    private val userViewModel: UserViewModel = ViewModelProvider(itemView.context as FragmentActivity).get(UserViewModel::class.java)
+
+    private lateinit var postViewModel: PostViewModel
+    private lateinit var authViewModel: AuthViewModel
+    private lateinit var userViewModel: UserViewModel
 
     init {
+        setupViewModels()
         itemView.setOnClickListener {
-            Log.d("TAG", "On click listener on position $adapterPosition")
             listener?.onItemClick(post)
         }
     }
 
-    fun bind(post: Post?, position: Int) {
-        authViewModel.getLoggedUser().observeForever { loggedUser ->
+    private fun setupViewModels() {
+        val activity = itemView.context as? FragmentActivity
+        if (activity != null) {
+            postViewModel = ViewModelProvider(activity)[PostViewModel::class.java]
+            authViewModel = ViewModelProvider(activity)[AuthViewModel::class.java]
+            userViewModel = ViewModelProvider(activity)[UserViewModel::class.java]
+        }
+    }
+
+    fun bind(post: Post?, position: Int, lifecycleOwner: LifecycleOwner) {
+        this.post = post
+        binding.contentTextView?.text = post?.content
+        binding.dateTextView?.text = post?.lastUpdated?.let { java.text.SimpleDateFormat("dd/MM/yyyy HH:mm", java.util.Locale.getDefault()).format(java.util.Date(it)) }
+
+        authViewModel.getLoggedUser(lifecycleOwner).observe(lifecycleOwner) { loggedUser ->
             if (post?.sender == loggedUser?.id) {
-                Log.d("TAG","post sender is  ${post?.sender}")
-                Log.d("TAG","logged user for deletion is  ${loggedUser?.userName}")
                 binding.deleteButton.visibility = View.VISIBLE
                 binding.editButton.visibility = View.VISIBLE
                 binding.deleteButton.setOnClickListener {
-                    Log.d("TAG", "Delete button clicked")
                     post?.let {
                         postViewModel.deletePost(it) {
-                            Log.d("TAG", "Deleted post successfully")
+                            // Handle post deletion
                         }
                     }
                 }
@@ -57,9 +71,21 @@ class PostViewHolder(
                 binding.editButton.visibility = View.GONE
             }
         }
-        this.post = post
-        binding.contentTextView?.text = post?.content
-        binding.dateTextView?.text = post?.lastUpdated?.let { java.text.SimpleDateFormat("dd/MM/yyyy HH:mm", java.util.Locale.getDefault()).format(java.util.Date(it)) }
+
+        userViewModel.getOtherUser(lifecycleOwner, post?.sender).observe(lifecycleOwner) { user ->
+            user?.userName?.let { username ->
+                binding.senderTextView?.text = username
+            }
+            user?.avatarUrl?.let { avatarUrl ->
+                if (avatarUrl.isNotBlank()) {
+                    Picasso.get()
+                        .load(avatarUrl)
+                        .placeholder(R.drawable.avatar)
+                        .into(binding.avatarImageView)
+                }
+            }
+        }
+
         post?.postPic?.let { avatarUrl ->
             if (avatarUrl.isNotBlank()) {
                 Picasso.get()
@@ -82,25 +108,20 @@ class PostViewHolder(
                     })
             }
         }
-        userViewModel.getOtherUser(post?.sender).observeForever { user ->
-            Log.d("TAG", "User from dao avatarUrl is: ${user?.json}")
-            user?.userName?.let { username ->
-                binding.senderTextView?.text = username
-            }
-            user?.avatarUrl?.let { avatarUrl ->
-                if (avatarUrl.isNotBlank()) {
-                    Picasso.get()
-                        .load(avatarUrl)
-                        .placeholder(R.drawable.avatar)
-                        .into(binding.avatarImageView)
-                }
-            }
-        }
     }
-}
 
-private fun navigateToEditPost(view: View, post: Post) {
-    val navController = Navigation.findNavController(view)
-    val action = PostsListFragmentDirections.actionGlobalEditPostFragment(post)
-    navController.navigate(action)
+    private fun navigateToEditPost(view: View, post: Post) {
+        val navController = Navigation.findNavController(view)
+        val action = PostsListFragmentDirections.actionGlobalEditPostFragment(post, sourceScreen)
+        navController.navigate(action)
+    }
+
+    private fun <T> LiveData<T>.observeOnce(lifecycleOwner: LifecycleOwner, observer: Observer<T>) {
+        observe(lifecycleOwner, object : Observer<T> {
+            override fun onChanged(value: T) {
+                observer.onChanged(value)
+                removeObserver(this)
+            }
+        })
+    }
 }

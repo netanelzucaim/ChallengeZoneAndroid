@@ -3,8 +3,11 @@ import android.graphics.Bitmap
 import android.os.Looper
 import android.util.Log
 import androidx.core.os.HandlerCompat
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
+import androidx.room.InvalidationTracker
 import com.idz.ChallengeZone.model.dao.AppLocalDb
 import com.idz.ChallengeZone.model.dao.AppLocalDbRepository
 import java.util.concurrent.Executors
@@ -278,23 +281,22 @@ class Model private constructor() {
     var id: String? = ""
     val postsOfLoggedUser: MutableLiveData<List<Post>> = MutableLiveData()
 
-    fun getLoggedUser(): LiveData<User?> {
+    fun getLoggedUser(lifecycleOwner: LifecycleOwner): LiveData<User?> {
         Log.d("TAG", "loggedUser")
         val id: String? = firebaseModel.getLoggedUserId()
         if (id != null) {
             this.id = id
-            Log.d("TAG", "loggedUser id is $id")
 
             val userPosts = database.postDao().getAllPostsBySender(this.id!!)
-            userPosts.observeForever { posts ->
+            userPosts.observe(lifecycleOwner, Observer { posts ->
                 postsOfLoggedUser.postValue(posts)
-            }
+            })
         }
         val result = MutableLiveData<User?>()
         id?.let {
-            database.userDao().getUserById(it).observeForever { otherUserValue ->
-                Log.d("TAG", "get logged username of $id")
-                Log.d("TAG", "logged username is $id and its details are $otherUserValue")
+            database.userDao().getUserById(it).observe(lifecycleOwner) { otherUserValue ->
+                //Log.d("TAG", "get logged username of $id")
+                //Log.d("TAG", "logged username is $id and its details are $otherUserValue")
                 mainHandler.post {
                     result.postValue(otherUserValue)
                 }
@@ -304,10 +306,10 @@ class Model private constructor() {
     }
 
     var otherUser: MutableLiveData<User?> = MutableLiveData()
-    fun getOtherUser(id: String?): LiveData<User?> {
+    fun getOtherUser(lifecycleOwner: LifecycleOwner, id: String?): LiveData<User?> {
         val result = MutableLiveData<User?>()
         id?.let {
-            database.userDao().getUserById(it).observeForever { otherUserValue ->
+            database.userDao().getUserById(it).observe(lifecycleOwner) { otherUserValue ->
 //                Log.d("TAG", "get username of $username")
 //                Log.d("TAG", "otherUsername is $username and its details are $otherUserValue")
                 mainHandler.post {
@@ -318,6 +320,14 @@ class Model private constructor() {
         return result
     }
 
+    private fun <T> LiveData<T>.observeOnce(lifecycleOwner: LifecycleOwner, observer: Observer<T>) {
+        observe(lifecycleOwner, object : Observer<T> {
+            override fun onChanged(value: T) {
+                observer.onChanged(value)
+                removeObserver(this)
+            }
+        })
+    }
 
 
 

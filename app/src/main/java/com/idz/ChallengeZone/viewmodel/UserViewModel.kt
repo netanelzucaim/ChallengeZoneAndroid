@@ -1,6 +1,7 @@
 package com.idz.ChallengeZone.viewmodel
 
 import android.graphics.Bitmap
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,8 +12,8 @@ class UserViewModel : ViewModel() {
 
     var user: LiveData<User?> = MutableLiveData()
 
-    fun fetchUser(): LiveData<User?> {
-        user = Model.shared.getLoggedUser()
+    fun fetchUser(lifecycleOwner: LifecycleOwner): LiveData<User?> {
+        user = Model.shared.getLoggedUser(lifecycleOwner = lifecycleOwner)
         return user
     }
 
@@ -20,7 +21,7 @@ class UserViewModel : ViewModel() {
         Model.shared.updateUser(user, bitmap, storage, callback)
     }
 
-    fun getOtherUser(userId: String?): LiveData<User?> {
-        return Model.shared.getOtherUser(userId)
+    fun getOtherUser(lifecycleOwner: LifecycleOwner, userId: String?): LiveData<User?> {
+        return Model.shared.getOtherUser(lifecycleOwner, userId)
     }
 }

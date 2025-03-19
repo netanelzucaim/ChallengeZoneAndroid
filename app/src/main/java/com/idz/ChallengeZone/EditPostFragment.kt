@@ -21,12 +21,14 @@ class EditPostFragment : Fragment() {
     private var cameraLauncher: ActivityResultLauncher<Void?>? = null
     private var didSetProfileImage = false
     private val postViewModel: PostViewModel by viewModels()
+    private var sourceScreen: String? = null
     var post: Post? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val args = EditPostFragmentArgs.fromBundle(requireArguments())
         post = args.post
+        sourceScreen = args.sourceScreen
     }
 
     override fun onCreateView(
@@ -74,9 +76,16 @@ class EditPostFragment : Fragment() {
 
     private fun navigateToPostList(view: View) {
         val navController = Navigation.findNavController(view)
-        navController.popBackStack(R.id.editPostFragment, true)
-        val action = EditPostFragmentDirections.actionGlobalPostListFragment()
-        navController.navigate(action)
+        when (sourceScreen) {
+            "profile" -> {
+                navController.popBackStack(R.id.editPostFragment, true)
+                navController.popBackStack(R.id.profileFragment, false)
+            }
+            "home" -> {
+                navController.popBackStack(R.id.editPostFragment, true)
+                navController.popBackStack(R.id.postListFragment, false)
+            }
+        }
     }
 
     private fun onCancelClicked(view: View) {
