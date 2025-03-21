@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/backgroundColor"
     tools:context=".AskAiFragment">
 
     <androidx.recyclerview.widget.RecyclerView
@@ -21,6 +22,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="Type a message"
+        android:textColorHint="@color/white"
+        android:textColor="@color/white"
         android:inputType="text"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/button"
@@ -32,6 +35,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Send"
+        android:backgroundTint="@color/white"
+        android:textSize="20sp"
+        android:textColor="@color/postBackgroundColor"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:padding="8dp"

@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/main"
+    android:background="@color/backgroundColor"
     tools:context=".NewPostFragment">
 
 
@@ -16,18 +17,23 @@
         android:text="Upload New Post"
         android:textSize="20sp"
         android:textStyle="bold"
+        android:textColor="@color/white"
         android:layout_marginTop="16dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Post Image -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Caption -->
-
-    <!-- Create Post Button -->
-
-    <!-- Bottom Navigation Bar -->
     <ImageButton
         android:id="@+id/takePhotoButton"
         android:layout_width="wrap_content"
@@ -47,7 +53,6 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:scaleType="centerCrop"
-        android:src="@drawable/post_image"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -62,6 +67,7 @@
         android:layout_marginEnd="16dp"
         android:text="This is me doing the plunk Challenge of today. Let's get some motivation 💪"
         android:textSize="16sp"
+        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -81,30 +87,5 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/contentEditText" />
-
-    <LinearLayout
-        android:id="@+id/bottomNav"
-        android:layout_width="0dp"
-        android:layout_height="56dp"
-        android:layout_marginTop="16dp"
-        android:background="#FFFFFF"
-        android:orientation="horizontal"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
-
-        <ProgressBar
-            android:id="@+id/progressBar"
-            style="?android:attr/progressBarStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-
-    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -6,4 +6,10 @@
     <color name="dark_gray">#757575</color> <!-- צבע לטקסט משני כמו תיאור המסך -->
     <color name="primary">#000000</color> <!-- צבע דומיננטי נוסף (למשל, לכפתור ההמשך) -->
     <color name="transparent">#00FFFFFF</color>
+    <color name="backgroundColor">#303537</color>
+    <color name="textColor">#FFFFFF</color>
+    <color name="progressBarColor">#BB86FC</color>
+    <color name="postBackgroundColor">#3E4446</color>
+    <color name="postTextColor">#E0E0E0</color>
+    <color name="nosam">#303537</color>
 </resources>

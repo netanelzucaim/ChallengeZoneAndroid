@@ -18,6 +18,7 @@ import com.idz.ChallengeZone.viewmodel.UserViewModel
 import com.idz.ChallengeZone.PostsListFragmentDirections
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
+
 class PostViewHolder(
     private val binding: PostListRowBinding,
     listener: OnItemClickListenerPosts?,
@@ -49,6 +50,7 @@ class PostViewHolder(
         this.post = post
         binding.contentTextView?.text = post?.content
         binding.dateTextView?.text = post?.lastUpdated?.let { java.text.SimpleDateFormat("dd/MM/yyyy HH:mm", java.util.Locale.getDefault()).format(java.util.Date(it)) }
+        binding.root.setBackgroundColor(binding.root.context.getColor(R.color.postBackgroundColor))
 
         authViewModel.getLoggedUser(lifecycleOwner).observe(lifecycleOwner) { loggedUser ->
             if (post?.sender == loggedUser?.id) {

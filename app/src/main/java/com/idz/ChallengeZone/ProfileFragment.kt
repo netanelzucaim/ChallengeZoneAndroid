@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
@@ -147,6 +148,7 @@ class ProfileFragment : Fragment() {
 
         binding?.userNameEditText?.isEnabled = true
         binding?.takePhotoButton?.isEnabled = true
+        binding?.takePhotoButton?.isVisible = true
         binding?.saveButton?.text = "Save"
         isEditing = true
         updateLogoutButton()
@@ -155,6 +157,7 @@ class ProfileFragment : Fragment() {
     private fun disableEditing() {
         binding?.userNameEditText?.isEnabled = false
         binding?.takePhotoButton?.isEnabled = false
+        binding?.takePhotoButton?.isVisible = false
         binding?.saveButton?.text = "Edit"
         isEditing = false
         updateLogoutButton()
