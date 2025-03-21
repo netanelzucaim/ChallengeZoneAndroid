@@ -2,6 +2,7 @@ package com.idz.ChallengeZone
 
 import com.idz.ChallengeZone.viewmodel.AskAiViewModel
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -37,8 +38,8 @@ class AskAiFragment : Fragment() {
         )
         chat = generativeModel.startChat(
             history = listOf(
-                content(role = "user") { text("Hello, I have 2 dogs in my house.") },
-                content(role = "model") { text("Great to meet you. What would you like to know?") }
+                content(role = "user") { text("Hello, How are you today.") },
+                content(role = "model") { text("I'm fine, and you?") }
             )
         )
 
@@ -76,11 +77,23 @@ class AskAiFragment : Fragment() {
                     viewModel.addMessage(responseMessage)
                     chatAdapter.notifyItemInserted(viewModel.messages.value?.size?.minus(1) ?: 0)
                     binding?.recyclerView?.scrollToPosition(viewModel.messages.value?.size?.minus(1) ?: 0)
+                } catch (e: Exception) {
+                    // Log the error and show a message to the user
+                    e.printStackTrace()
+                    val errorMessage = ChatMessage("Error: ${e.message}", false)
+                    viewModel.addMessage(errorMessage)
+                    chatAdapter.notifyItemInserted(viewModel.messages.value?.size?.minus(1) ?: 0)
+                    binding?.recyclerView?.scrollToPosition(viewModel.messages.value?.size?.minus(1) ?: 0)
                 } finally {
                     binding?.button?.isEnabled = true // Re-enable the button
                 }
             }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding = null
     }
 
     public fun buttonSendChat(view: View) {
