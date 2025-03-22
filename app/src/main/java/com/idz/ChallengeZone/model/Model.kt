@@ -90,10 +90,9 @@ class Model private constructor() {
         }
     }
     fun refreshAllPostsOfLoggedUser() {
-
-        Log.d("TAG", "refreshAllPosts")
+        Log.d("TAG", "refreshAllPostsOfLoggedUser")
         loadingState.postValue(LoadingState.LOADING)
-        var lastUpdated: Long = Post.lastUpdated
+        val lastUpdated: Long = Post.lastUpdated
         firebaseModel.getAllPostsOfLoggedUser(lastUpdated) { list ->
             executor.execute {
                 var currentTime = lastUpdated
@@ -106,6 +105,7 @@ class Model private constructor() {
                     }
                 }
                 Post.lastUpdated = currentTime
+                postsOfLoggedUser.postValue(list) // Update postsOfLoggedUser LiveData
                 loadingState.postValue(LoadingState.LOADED)
             }
         }

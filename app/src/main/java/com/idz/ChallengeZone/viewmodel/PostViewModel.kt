@@ -15,6 +15,10 @@ class PostViewModel : ViewModel() {
         Model.shared.refreshAllPosts()
     }
 
+    fun refreshAllPostsOfLoggedUser() {
+        Model.shared.refreshAllPostsOfLoggedUser()
+    }
+
     fun addPost(post: Post, bitmap: Bitmap?, storage: Model.Storage, callback: () -> Unit) {
         Model.shared.addPost(post, bitmap, storage, callback)
     }

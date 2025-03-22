@@ -65,7 +65,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="72dp"
         android:layout_marginEnd="16dp"
-        android:text="This is me doing the plunk Challenge of today. Let's get some motivation 💪"
+        android:text=""
         android:textSize="16sp"
         android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
