@@ -108,6 +108,9 @@ class PostViewHolder(
                             binding.postPicImageView.setImageDrawable(placeHolderDrawable)
                         }
                     })
+            } else {
+                binding.postPicImageView.setImageDrawable(null)
+                binding.postPicImageView.visibility = View.GONE
             }
         }
     }
