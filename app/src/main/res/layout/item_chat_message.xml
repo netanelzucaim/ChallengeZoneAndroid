@@ -3,7 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
+    android:background="@color/postBackgroundColor"
     android:padding="8dp">
+
 
     <TextView
         android:id="@+id/text_message"

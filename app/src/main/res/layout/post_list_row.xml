@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
-    android:background="#FFFFFF"
+    android:background="@color/postBackgroundColor"
     android:elevation="4dp"
     android:padding="8dp">
 
@@ -14,7 +14,10 @@
         android:id="@+id/avatarImageView"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:src="@drawable/challenges_button"
+        android:layout_marginEnd="8dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/avatar"
+        android:background="@drawable/challenges_button"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -32,6 +35,7 @@
             android:id="@+id/senderTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/postTextColor"
             android:text="Challenge.Zone"
             android:textSize="16sp"
             android:textStyle="bold" />
@@ -63,6 +67,7 @@
         android:id="@+id/contentTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:textColor="@color/postTextColor"
         android:layout_marginTop="8dp"
         android:text="The First Challenge For Today: Hold a plank position for 2 minutes"
         android:textSize="14sp"
@@ -96,7 +101,9 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/linearLayout3"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout3"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="1.0"
+        app:tint="@color/light_gray" />
+
 
     <ImageButton
         android:id="@+id/editButton"
@@ -105,6 +112,7 @@
         android:layout_marginStart="84dp"
         android:background="@color/transparent"
         android:src="@drawable/baseline_border_color_24"
+        app:tint="@color/light_gray"
         android:text="edit"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@+id/linearLayout3"
