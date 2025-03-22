@@ -11,11 +11,11 @@
         android:icon="@drawable/library_add"
         android:title="Add" />
     <item
-        android:id="@+id/profileFragment"
-        android:icon="@drawable/person"
-        android:title="Profile" />
-    <item
         android:id="@+id/askAiFragment"
         android:icon="@drawable/chat"
         android:title="Ask Ai" />
+    <item
+        android:id="@+id/profileFragment"
+        android:icon="@drawable/person"
+        android:title="Profile" />
 </menu>

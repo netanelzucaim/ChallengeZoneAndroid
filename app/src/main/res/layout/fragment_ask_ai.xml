@@ -21,25 +21,28 @@
         android:id="@+id/editTextInput"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="28dp"
         android:hint="Type a message"
-        android:textColorHint="@color/white"
-        android:textColor="@color/white"
         android:inputType="text"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/button"
+        android:padding="8dp"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:padding="8dp" />
+        app:layout_constraintEnd_toStartOf="@+id/button"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Send"
+        android:layout_marginBottom="28dp"
         android:backgroundTint="@color/white"
-        android:textSize="20sp"
-        android:textColor="@color/postBackgroundColor"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:onClick="buttonSendChat"
         android:padding="8dp"
-        android:onClick="buttonSendChat" />
+        android:text="Send"
+        android:textColor="@color/postBackgroundColor"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
