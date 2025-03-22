@@ -36,7 +36,7 @@ class EditPostFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentEditPostBinding.inflate(inflater, container, false)
-        binding?.cancelButton?.setOnClickListener(::onCancelClicked)
+        binding?.returnButton?.setOnClickListener(::onCancelClicked)
         binding?.saveButton?.setOnClickListener(::onSaveClicked)
         cameraLauncher = registerForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap ->
             binding?.postPicImageView?.setImageBitmap(bitmap)
