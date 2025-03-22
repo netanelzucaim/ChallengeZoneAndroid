@@ -53,13 +53,15 @@ class ProfileFragment : Fragment() {
         binding?.recyclerView?.layoutManager = LinearLayoutManager(context)
 
         adapter = PostsRecyclerAdapter(postsViewModel.postsOfLoggedUser.value, viewLifecycleOwner, "profile")
-        postsViewModel.postsOfLoggedUser.observeOnce(viewLifecycleOwner) {
+        binding?.recyclerView?.adapter = adapter
+
+        postsViewModel.postsOfLoggedUser.observe(viewLifecycleOwner) {
             adapter?.update(it)
             adapter?.notifyDataSetChanged()
             binding?.progressBar?.visibility = View.GONE
         }
-        binding?.swipeToRefresh?.setOnRefreshListener(postsViewModel::refreshAllPosts)
-        postsViewModel.loadingState.observeOnce(viewLifecycleOwner) { state ->
+        binding?.swipeToRefresh?.setOnRefreshListener(postsViewModel::refreshAllPostsOfLoggedUser)
+        postsViewModel.loadingState.observe(viewLifecycleOwner) { state ->
             binding?.swipeToRefresh?.isRefreshing = state == Model.LoadingState.LOADING
         }
         Log.d("TAG", "profile")
@@ -230,7 +232,7 @@ class ProfileFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        getAllPosts()
+        postsViewModel.refreshAllPostsOfLoggedUser()
     }
 
     override fun onDestroy() {

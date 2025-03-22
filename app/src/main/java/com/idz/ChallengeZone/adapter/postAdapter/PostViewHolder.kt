@@ -53,7 +53,7 @@ class PostViewHolder(
         binding.root.setBackgroundColor(binding.root.context.getColor(R.color.postBackgroundColor))
 
         authViewModel.getLoggedUser(lifecycleOwner).observe(lifecycleOwner) { loggedUser ->
-            if (post?.sender == loggedUser?.id) {
+            if (post?.sender == loggedUser?.id && sourceScreen == "home") {
                 binding.deleteButton.visibility = View.VISIBLE
                 binding.editButton.visibility = View.VISIBLE
                 binding.deleteButton.setOnClickListener {

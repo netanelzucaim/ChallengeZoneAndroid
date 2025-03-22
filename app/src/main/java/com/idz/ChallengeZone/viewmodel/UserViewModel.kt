@@ -11,10 +11,16 @@ import com.idz.ChallengeZone.model.User
 class UserViewModel : ViewModel() {
 
     var user: LiveData<User?> = MutableLiveData()
+    var loadingState: LiveData<Model.LoadingState> = Model.shared.loadingState
+
 
     fun fetchUser(lifecycleOwner: LifecycleOwner): LiveData<User?> {
         user = Model.shared.getLoggedUser(lifecycleOwner = lifecycleOwner)
         return user
+    }
+
+    fun refreshAllUsers() {
+        Model.shared.refreshAllUsers()
     }
 
     fun updateUser(user: User, bitmap: Bitmap?, storage: Model.Storage, callback: () -> Unit) {
