@@ -11,6 +11,10 @@ import com.idz.ChallengeZone.adapter.postAdapter.PostsRecyclerAdapter
 import com.idz.ChallengeZone.model.Post
 import com.idz.ChallengeZone.databinding.FragmentPostsListBinding
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
+import androidx.navigation.Navigation
 import com.idz.ChallengeZone.model.Model
 import com.idz.ChallengeZone.viewmodel.PostViewModel
 
@@ -25,6 +29,15 @@ class PostsListFragment : Fragment() {
     private var adapter: PostsRecyclerAdapter? = null
     private var binding: FragmentPostsListBinding? = null
 
+    private fun <T> LiveData<T>.observe(lifecycleOwner: LifecycleOwner, observer: Observer<T>) {
+        observe(lifecycleOwner, object : Observer<T> {
+            override fun onChanged(value: T) {
+                observer.onChanged(value)
+                removeObserver(this)
+            }
+        })
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -34,7 +47,7 @@ class PostsListFragment : Fragment() {
         binding?.recyclerView?.setHasFixedSize(true)
         binding?.recyclerView?.layoutManager = LinearLayoutManager(context)
 
-        adapter = PostsRecyclerAdapter(viewModel.posts.value)
+        adapter = PostsRecyclerAdapter(viewModel.posts.value, viewLifecycleOwner, "home")
         viewModel.posts.observe(viewLifecycleOwner) {
             adapter?.update(it)
             adapter?.notifyDataSetChanged()
@@ -72,5 +85,10 @@ class PostsListFragment : Fragment() {
     private fun getAllPosts() {
         binding?.progressBar?.visibility = View.VISIBLE
         viewModel.refreshAllPosts()
+        viewModel.posts.observe(viewLifecycleOwner) {
+            adapter?.update(it)
+            adapter?.notifyDataSetChanged()
+            binding?.progressBar?.visibility = View.GONE
+        }
     }
 }

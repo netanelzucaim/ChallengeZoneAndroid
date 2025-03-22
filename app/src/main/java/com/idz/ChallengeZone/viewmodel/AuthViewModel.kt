@@ -1,6 +1,7 @@
 package com.idz.ChallengeZone.viewmodel
 
 import android.graphics.Bitmap
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -49,7 +50,7 @@ class AuthViewModel : ViewModel() {
         Model.shared.logOut()
     }
 
-    fun getLoggedUser(): LiveData<User?> {
-        return Model.shared.getLoggedUser()
+    fun getLoggedUser(viewLifecycleOwner: LifecycleOwner): LiveData<User?> {
+        return Model.shared.getLoggedUser(lifecycleOwner = viewLifecycleOwner)
     }
 }

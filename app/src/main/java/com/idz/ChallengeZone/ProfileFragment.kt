@@ -3,6 +3,7 @@ package com.idz.ChallengeZone
 import android.app.AlertDialog
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -10,15 +11,20 @@ import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.idz.ChallengeZone.adapter.postAdapter.PostsRecyclerAdapter
+import com.idz.ChallengeZone.databinding.FragmentPostsListBinding
 import com.idz.ChallengeZone.databinding.FragmentProfileBinding
 import com.idz.ChallengeZone.model.User
 import com.idz.ChallengeZone.viewmodel.AuthViewModel
 import com.idz.ChallengeZone.viewmodel.PostViewModel
 import com.idz.ChallengeZone.viewmodel.UserViewModel
 import com.idz.ChallengeZone.model.Model
+import com.idz.ChallengeZone.model.Post
 import com.squareup.picasso.Picasso
 
 class ProfileFragment : Fragment() {
@@ -30,10 +36,9 @@ class ProfileFragment : Fragment() {
     private var binding: FragmentProfileBinding? = null
     private var cameraLauncher: ActivityResultLauncher<Void?>? = null
     private var didSetProfileImage = false
-    private var isEditing = false  // משתנה שמייצג אם אנחנו במצב עריכה
+    private var isEditing = false
     var user: User? = null
 
-    // משתנים לשמירת הערכים המקוריים
     private var originalUserName: String? = null
     private var originalAvatarUrl: String? = null
 
@@ -41,28 +46,39 @@ class ProfileFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         binding = FragmentProfileBinding.inflate(inflater, container, false)
 
-        // כפתור ה-Edit/Save
+        binding?.recyclerView?.setHasFixedSize(true)
+        binding?.recyclerView?.layoutManager = LinearLayoutManager(context)
+
+        adapter = PostsRecyclerAdapter(postsViewModel.postsOfLoggedUser.value, viewLifecycleOwner, "profile")
+        postsViewModel.postsOfLoggedUser.observeOnce(viewLifecycleOwner) {
+            adapter?.update(it)
+            adapter?.notifyDataSetChanged()
+            binding?.progressBar?.visibility = View.GONE
+        }
+        binding?.swipeToRefresh?.setOnRefreshListener(postsViewModel::refreshAllPosts)
+        postsViewModel.loadingState.observeOnce(viewLifecycleOwner) { state ->
+            binding?.swipeToRefresh?.isRefreshing = state == Model.LoadingState.LOADING
+        }
+        Log.d("TAG", "profile")
+
         binding?.saveButton?.setOnClickListener {
             if (isEditing) {
-                onSaveClicked(it)  // אם אנחנו במצב עריכה - שמור את השינויים
+                onSaveClicked(it)
             } else {
-                enableEditing()  // אם אנחנו במצב צפייה - הפוך לעריכה
+                enableEditing()
             }
         }
 
-        // כפתור ה-Logout/Cancel
         binding?.logoutButton?.setOnClickListener {
             if (isEditing) {
-                cancelEditing()  // אם אנחנו במצב עריכה - בצע ביטול
+                cancelEditing()
             } else {
-                onLogoutClicked(it)  // אם אנחנו במצב צפייה - בצע התנתקות
+                onLogoutClicked(it)
             }
         }
 
-        // הפעלת מצלמה
         cameraLauncher = registerForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap ->
             binding?.avatarImageView?.setImageBitmap(bitmap)
             didSetProfileImage = true
@@ -75,25 +91,36 @@ class ProfileFragment : Fragment() {
         setupView()
         setupRecyclerView()
 
+        adapter?.listener = object : OnItemClickListenerPosts {
+            override fun onItemClick(position: Int) {
+                Log.d("TAG", "On click Activity listener on position $position")
+            }
+
+            override fun onItemClick(post: Post?) {
+                // Handle item click
+            }
+        }
+        binding?.recyclerView?.adapter = adapter
+
         return binding?.root
     }
 
     private fun setupRecyclerView() {
         binding?.recyclerView?.setHasFixedSize(true)
         binding?.recyclerView?.layoutManager = LinearLayoutManager(context)
-        adapter = PostsRecyclerAdapter(postsViewModel.postsOfLoggedUser.value)
-        postsViewModel.postsOfLoggedUser.observe(viewLifecycleOwner) {
+        adapter = PostsRecyclerAdapter(postsViewModel.postsOfLoggedUser.value, viewLifecycleOwner, "profile")
+        postsViewModel.postsOfLoggedUser.observeOnce(viewLifecycleOwner) {
             adapter?.update(it)
             adapter?.notifyDataSetChanged()
             binding?.progressBar?.visibility = View.GONE
         }
         binding?.swipeToRefresh?.setOnRefreshListener(postsViewModel::refreshAllPosts)
         binding?.recyclerView?.adapter = adapter
-        disableEditing()  // ברגע שהרשימה נטענת, המצב יהיה read-only
+        disableEditing()
     }
 
     private fun setupView() {
-        userViewModel.fetchUser().observe(viewLifecycleOwner) { loggedUser ->
+        userViewModel.fetchUser(viewLifecycleOwner).observeOnce(viewLifecycleOwner) { loggedUser ->
             user = loggedUser
             user?.userName?.let { userName ->
                 binding?.userNameEditText?.setText(userName)
@@ -107,47 +134,41 @@ class ProfileFragment : Fragment() {
                 }
             }
 
-            // שמור את הערכים המקוריים לפני המעבר לעריכה
             originalUserName = user?.userName
             originalAvatarUrl = user?.avatarUrl
 
-            // הפוך את השדות למצב read-only ברגע שהמשתמש טוען את המידע
             disableEditing()
         }
     }
 
     private fun enableEditing() {
-        // שמור את הערכים המקוריים לפני שינוי
         originalUserName = binding?.userNameEditText?.text.toString()
         originalAvatarUrl = user?.avatarUrl
 
-        // הפוך את השדות לעריכה
         binding?.userNameEditText?.isEnabled = true
         binding?.takePhotoButton?.isEnabled = true
-        binding?.saveButton?.text = "Save" // שינוי הכפתור ל-Save
+        binding?.saveButton?.text = "Save"
         isEditing = true
-        updateLogoutButton() // עדכון כפתור ה-logout ל-Cancel במצב עריכה
+        updateLogoutButton()
     }
 
     private fun disableEditing() {
-        // הפוך את השדות ללא ניתנים לעריכה
         binding?.userNameEditText?.isEnabled = false
         binding?.takePhotoButton?.isEnabled = false
-        binding?.saveButton?.text = "Edit" // שינוי הכפתור חזרה ל-Edit
+        binding?.saveButton?.text = "Edit"
         isEditing = false
-        updateLogoutButton() // עדכון כפתור ה-logout ל-Logout במצב צפייה
+        updateLogoutButton()
     }
 
     private fun updateLogoutButton() {
         if (isEditing) {
-            binding?.logoutButton?.text = "Cancel" // שינוי ל-Cancel במצב עריכה
+            binding?.logoutButton?.text = "Cancel"
         } else {
-            binding?.logoutButton?.text = "Logout" // החזר ל-Logout במצב צפייה
+            binding?.logoutButton?.text = "Logout"
         }
     }
 
     private fun cancelEditing() {
-        // החזר את הערכים המקוריים למצבם הקודם
         binding?.userNameEditText?.setText(originalUserName)
         user?.avatarUrl = originalAvatarUrl.toString()
         Picasso.get()
@@ -155,12 +176,10 @@ class ProfileFragment : Fragment() {
             .placeholder(R.drawable.avatar)
             .into(binding?.avatarImageView)
 
-        // החזר את המצב לקריאה בלבד
         disableEditing()
     }
 
     private fun onSaveClicked(view: View) {
-        // אם אנחנו במצב עריכה, נבצע שמירה
         binding?.progressBar?.visibility = View.VISIBLE
         authViewModel.checkUsernameTaken(binding?.userNameEditText?.text.toString())
 
@@ -168,12 +187,12 @@ class ProfileFragment : Fragment() {
     }
 
     private fun observeViewModel() {
-        authViewModel.isUsernameTaken.observe(viewLifecycleOwner) { isTaken ->
+        authViewModel.isUsernameTaken.observeOnce(viewLifecycleOwner) { isTaken ->
             if (isTaken == true && binding?.userNameEditText?.text.toString() != user?.userName) {
                 binding?.progressBar?.visibility = View.GONE
                 makeAToast("Username already been taken")
             } else {
-                updateUser()  // אם לא נמצא שם משתמש כפול, נעדכן את המשתמש
+                updateUser()
             }
         }
     }
@@ -187,14 +206,14 @@ class ProfileFragment : Fragment() {
 
             userViewModel.updateUser(user!!, bitmap, Model.Storage.CLOUDINARY) {
                 binding?.progressBar?.visibility = View.GONE
-                getAllPosts()  // Refresh the posts list
-                disableEditing()  // החזר את המצב ל-read only
+                getAllPosts()
+                disableEditing()
             }
         } else {
             userViewModel.updateUser(user!!, null, Model.Storage.CLOUDINARY) {
                 binding?.progressBar?.visibility = View.GONE
-                getAllPosts()  // Refresh the posts list
-                disableEditing()  // החזר את המצב ל-read only
+                getAllPosts()
+                disableEditing()
             }
         }
     }
@@ -219,6 +238,11 @@ class ProfileFragment : Fragment() {
     private fun getAllPosts() {
         binding?.progressBar?.visibility = View.VISIBLE
         postsViewModel.refreshAllPosts()
+        postsViewModel.postsOfLoggedUser.observeOnce(viewLifecycleOwner) {
+            adapter?.update(it)
+            adapter?.notifyDataSetChanged()
+            binding?.progressBar?.visibility = View.GONE
+        }
     }
 
     private fun setUser() {
@@ -236,5 +260,14 @@ class ProfileFragment : Fragment() {
             .setTitle("Notification")
             .setMessage(text)
             .create().show()
+    }
+
+    private fun <T> LiveData<T>.observeOnce(lifecycleOwner: LifecycleOwner, observer: Observer<T>) {
+        observe(lifecycleOwner, object : Observer<T> {
+            override fun onChanged(value: T) {
+                observer.onChanged(value)
+                removeObserver(this)
+            }
+        })
     }
 }
