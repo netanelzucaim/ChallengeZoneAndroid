@@ -68,7 +68,6 @@ class PostsListFragment : Fragment() {
             }
         }
         binding?.recyclerView?.adapter = adapter
-
         return binding?.root
     }
 

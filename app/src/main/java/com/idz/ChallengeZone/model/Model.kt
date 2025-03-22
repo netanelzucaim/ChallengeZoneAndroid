@@ -26,10 +26,10 @@ class Model private constructor() {
         CLOUDINARY
     }
 
+
     private val database: AppLocalDbRepository = AppLocalDb.database
     private var executor = Executors.newSingleThreadExecutor()
     private var mainHandler = HandlerCompat.createAsync(Looper.getMainLooper())
-//    val students: LiveData<List<Student>> = database.studentDao().getAllStudent()
     val posts: LiveData<List<Post>> = database.postDao().getAllPosts()
 
     val users: LiveData<List<User>> = database.userDao().getAllUsers()
@@ -39,9 +39,24 @@ class Model private constructor() {
     private val cloudinaryModel = CloudinaryModel()
     private val firebaseModel = FirebaseModel()
 
+    init {
+        // Listen for post deletions and update the local database
+        firebaseModel.listenForPostDeletions { deletedPosts ->
+            executor.execute {
+                for (post in deletedPosts) {
+                    database.postDao().delete(post)
+                }
+                mainHandler.post {
+                    refreshAllPosts()
+                }
+            }
+        }
+    }
+
     companion object {
         val shared = Model()
     }
+
 
     fun refreshAllUsers() {
         Log.d("TAG", "refreshAllUsers")
@@ -246,6 +261,7 @@ class Model private constructor() {
         executor.execute {
             database.postDao().delete(post)
             mainHandler.post {
+                refreshAllPosts()
                 callback()
             }
         }
@@ -295,8 +311,6 @@ class Model private constructor() {
         val result = MutableLiveData<User?>()
         id?.let {
             database.userDao().getUserById(it).observe(lifecycleOwner) { otherUserValue ->
-                //Log.d("TAG", "get logged username of $id")
-                //Log.d("TAG", "logged username is $id and its details are $otherUserValue")
                 mainHandler.post {
                     result.postValue(otherUserValue)
                 }
@@ -310,8 +324,6 @@ class Model private constructor() {
         val result = MutableLiveData<User?>()
         id?.let {
             database.userDao().getUserById(it).observe(lifecycleOwner) { otherUserValue ->
-//                Log.d("TAG", "get username of $username")
-//                Log.d("TAG", "otherUsername is $username and its details are $otherUserValue")
                 mainHandler.post {
                     result.postValue(otherUserValue)
                 }
