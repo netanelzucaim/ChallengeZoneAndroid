@@ -7,6 +7,7 @@ import com.google.android.gms.tasks.OnFailureListener
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.firestoreSettings
 import com.google.firebase.firestore.ktx.firestore
@@ -54,10 +55,29 @@ class FirebaseModel {
                     false -> callback(listOf())
                 }
             }
-//            .addOnFailureListener(OnFailureListener {
-//                Log.d("TAG", it.toString() + it.message)
-//            })
     }
+
+    fun listenForPostDeletions(callback: PostsCallback) {
+        database.collection(Constants.Collections.POSTS)
+            .addSnapshotListener { snapshots, e ->
+                if (e != null) {
+                    Log.w("TAG", "Listen failed.", e)
+                    return@addSnapshotListener
+                }
+
+                val deletedPosts = mutableListOf<Post>()
+                for (dc in snapshots!!.documentChanges) {
+                    if (dc.type == DocumentChange.Type.REMOVED) {
+                        val post = Post.fromJSON(dc.document.data)
+                        deletedPosts.add(post)
+                    }
+                }
+                if (deletedPosts.isNotEmpty()) {
+                    callback(deletedPosts)
+                }
+            }
+    }
+
     fun getAllPostsOfLoggedUser(sinceLastUpdated: Long, callback: PostsCallback) {
         database.collection(Constants.Collections.POSTS)
             .whereGreaterThanOrEqualTo(Post.LAST_UPDATED,sinceLastUpdated.toFirebaseTimestamp)
@@ -76,9 +96,6 @@ class FirebaseModel {
                     false -> callback(listOf())
                 }
             }
-//            .addOnFailureListener(OnFailureListener {
-//                Log.d("TAG", it.toString() + it.message)
-//            })
     }
 
     fun getAllUsers(sinceLastUpdated: Long, callback: UsersCallback) {
@@ -115,15 +132,6 @@ class FirebaseModel {
             }
     }
 
-//    fun add(student: Student, callback: EmptyCallback) {
-//        database.collection(Constants.Collections.STUDENTS).document(student.id).set(student.json)
-//            .addOnCompleteListener {
-//                callback()
-//            }
-//            .addOnFailureListener {
-//                Log.d("TAG", it.toString() + it.message)
-//            }
-//    }
     fun addUser(user: User, callback: EmptyCallback) {
         database.collection(Constants.Collections.USERS).document(user.id).set(user.json)
             .addOnCompleteListener {
@@ -134,23 +142,14 @@ class FirebaseModel {
             }
     }
 
-//    fun delete(student: Student, callback: EmptyCallback) {
-//        database.collection(Constants.Collections.STUDENTS).document(student.id).delete()
-//            .addOnCompleteListener {
-//                callback()
-//            }
-//    }
-//
-//    fun update(student: Student, callback: EmptyCallback) {
-//        database.collection(Constants.Collections.STUDENTS).document(student.id).set(student.json)
-//            .addOnCompleteListener {
-//                callback()
-//            }
-//    }
     fun deletePost(post: Post, callback: EmptyCallback) {
         database.collection(Constants.Collections.POSTS).document(post.id).delete()
             .addOnCompleteListener {
-                callback()
+                if (it.isSuccessful) {
+                    callback()
+                } else {
+                    Log.d("TAG", "Failed to delete post: ${it.exception?.message}")
+                }
             }
     }
 
@@ -209,7 +208,6 @@ class FirebaseModel {
                                         UserProfileChangeRequest.Builder().setDisplayName(user.id)
                                             .build()
                                     auth.getCurrentUser()?.updateProfile(profile)
-//                                    Model.shared.username = user.userName
                                     callback(authTask.isSuccessful)
                                 }
                         } else {
@@ -263,7 +261,6 @@ class FirebaseModel {
                              UserProfileChangeRequest.Builder().setDisplayName(newUser.id)
                                 .build()
                         auth.getCurrentUser()?.updateProfile(profile)
-//                        Model.shared.username = newUser.userName
                         auth.signInWithEmailAndPassword(newUser.email, password)
                             .addOnCompleteListener(
                                 OnCompleteListener<AuthResult?> {
