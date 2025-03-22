@@ -60,7 +60,7 @@ class SignInFragment : Fragment() {
                     Navigation.findNavController(it).navigate(action)
                 }
             } else {
-                makeAToast("Username or password are not correct")
+                makeAToast("Username or password are incorrect")
             }
         }
     }
