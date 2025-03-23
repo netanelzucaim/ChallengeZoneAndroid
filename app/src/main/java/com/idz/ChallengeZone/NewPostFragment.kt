@@ -1,5 +1,6 @@
 package com.idz.ChallengeZone
 
+import android.app.AlertDialog
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.util.Log
@@ -8,6 +9,7 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
@@ -71,6 +73,11 @@ class NewPostFragment : Fragment() {
     }
 
     private fun onSaveClicked(view: View) {
+        if (binding?.contentEditText?.text?.isEmpty() == true && !didSetProfileImage) {
+            makeAToast("Please enter a post content or select a picture")
+            return
+        }
+
         var currentUser = ""
         authViewModel.getLoggedUser(viewLifecycleOwner).observe(viewLifecycleOwner) { user ->
             currentUser = user?.id ?: ""
@@ -104,5 +111,12 @@ class NewPostFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun makeAToast(text: String?) {
+        AlertDialog.Builder(context)
+            .setTitle("Notification")
+            .setMessage(text)
+            .create().show()
     }
 }
