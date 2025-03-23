@@ -1,5 +1,6 @@
 package com.idz.ChallengeZone
 
+import android.app.AlertDialog
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -55,6 +56,11 @@ class EditPostFragment : Fragment() {
     }
 
     private fun onSaveClicked(view: View) {
+        if (binding?.contentEditText?.text?.isEmpty() == true && !didSetProfileImage) {
+            makeAToast("Please enter a post content or select a picture")
+            return
+        }
+
         binding?.progressBar?.visibility = View.VISIBLE
         setPost()
         if (didSetProfileImage) {
@@ -111,5 +117,13 @@ class EditPostFragment : Fragment() {
             content = binding?.contentEditText?.text.toString(),
             postPic = post?.postPic
         )
+
+    }
+
+    private fun makeAToast(text: String?) {
+        AlertDialog.Builder(context)
+            .setTitle("Notification")
+            .setMessage(text)
+            .create().show()
     }
 }
